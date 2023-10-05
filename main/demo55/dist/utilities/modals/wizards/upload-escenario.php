@@ -3372,10 +3372,10 @@ battery_share
                                     <style>.image-input-placeholder {
                                             background-image: url('assets/media/svg/files/blank-image.svg');
                                         }
-
                                         [data-bs-theme="dark"] .image-input-placeholder {
                                             background-image: url('assets/media/svg/files/blank-image-dark.svg');
-                                        }</style>
+                                        }
+                                    </style>
                                     <!--end::Image input placeholder-->
                                     <!--begin::Image input-->
                                     <div class="image-input image-input-empty image-input-outline image-input-placeholder"
