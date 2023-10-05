@@ -960,6 +960,14 @@ if (empty($_SESSION['mail'])) {
 													</span>
                                             <span class="menu-title">Partidos</span>
                                         </a>
+                                        <a class="menu-link "
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-escenario.php">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+                                            <span class="menu-title">Escenarios</span>
+                                        </a>
+
                                     </div>
                                 </div>
 
@@ -1077,6 +1085,7 @@ if (empty($_SESSION['mail'])) {
                                         </a>
                                     </div>
                                     <!--end::Menu item-->
+                                    <!--end::Menu item-->
                                 </div>
                                 <!--end::Menu-->
                             </div>
@@ -1171,13 +1180,12 @@ if (empty($_SESSION['mail'])) {
                         <!--begin::Content container-->
                         <div id="kt_app_content_container" class="app-container container-fluid">
                             <!--begin::Navbar-->
-
                             <?php
                             include('\laragon\www\RFIDPLAY\main\conexion.php');
                             $varsearch = $_GET["datosescue"];
 
-                            $sql = $mysqli->query("SELECT * from escuelasdefutbol RIGHT JOIN rfidplay.entrenadores e on escuelasdefutbol.id_escuela = e.id_escuela
-    RIGHT JOIN rfidplay.documentos d on d.id_documento = e.id_documento LEFT JOIN rfidplay.equipos e2 on escuelasdefutbol.id_escuela = e2.id_escuela
+                            $sql = $mysqli->query("SELECT  * FROM escuelasdefutbol join rfidplay.entrenadores e on escuelasdefutbol.id_escuela = e.id_escuela
+    inner join rfidplay.documentos d on e.id_documento = d.id_documento
 WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                             if ($sql->num_rows != 0) {
                                 while ($row = $sql->fetch_object()) {
@@ -1204,7 +1212,10 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                                             <!--begin::Name-->
                                                             <div class="d-flex align-items-center mb-2">
                                                                 <a href="#"
-                                                                   class="text-gray-900 text-hover-primary fs-2 fw-bold me-2"><?php echo $row->nombre_escuela; ?></a>
+                                                                   class="text-gray-900 text-hover-primary fs-2 fw-bold me-2"><?php
+                                                                    $nameescul = $row->nombre_escuela;
+
+                                                                    echo $row->nombre_escuela; ?></a>
                                                                 <a href="#">
                                                                     <i class="ki-outline ki-verify fs-1 text-primary"></i>
                                                                 </a>
@@ -1359,7 +1370,7 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                                                 </div>
                                                                 <!--end::Stat-->
                                                                 <!--begin::Stat-->
-                                                                <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                                                                <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6mb-3">
                                                                     <!--begin::Number-->
                                                                     <div class="d-flex align-items-center">
                                                                         <i class="ki-outline ki-arrow-up fs-3 text-success me-2"></i>
@@ -1402,7 +1413,7 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                             <!--begin::Navs-->
                                             <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
                                                 <li class="nav-item mt-2">
-                                                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active"
+                                                    <a class="nav-link text-active-primary ms-0 me-10 py-5"
                                                        href="../../demo55/dist/pages/user-profile/followers.php?datosescue=<?php echo $varsearch; ?>">Jugadores</a>
                                                 </li>
 
@@ -1423,8 +1434,18 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                             <!--begin::Followers toolbar-->
                             <div class="d-flex flex-wrap flex-stack mb-6">
                                 <!--begin::Title-->
-                                <h3 class="text-gray-800 fw-bold my-2">Jugadores
-                                    <span class="fs-6 text-gray-400 fw-semibold ms-1">(234)</span></h3>
+                                <h3 class="text-gray-800 fw-bold my-2">Equipos
+                                    <span class="fs-6 text-gray-400 fw-semibold ms-1">(<?php
+                                        include('\laragon\www\RFIDPLAY\main\conexion.php');
+                                        $sql = $mysqli->query("SELECT count(id_escuela)as total FROM equipos where id_escuela ='$varsearch'");
+                                        if ($sql->num_rows != 0) {
+                                            while ($row = $sql->fetch_object()) {
+                                                echo $row->total;
+                                            }
+                                        }else{
+                                            echo '0';
+                                        }
+                                        ?>)</span></h3>
                                 <!--end::Title-->
                                 <!--begin::Controls-->
                                 <div class="d-flex my-2">
@@ -1443,112 +1464,115 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <!--end::Followers toolbar-->
                             <!--begin::Row-->
-                            <div class="row g-6 mb-6 g-xl-9 mb-xl-9" id="jugadoresContainer">
+                            <div class="row g-6 mb-6 g-xl-9 mb-xl-9" id="equiposcontainer">
                                 <!--begin::Followers-->
                                 <!--begin::Col-->
+                                <?php
+                                include('\laragon\www\RFIDPLAY\main\conexion.php');
+                                $varsearch = $_GET["datosescue"];
+                                $sql = $mysqli->query("SELECT COUNT(equipofk) AS TOTAL,NOMBRE_EQUIPO,fk_type_equipo
+FROM jugador_equipo RIGHT JOIN rfidplay.equipos e on jugador_equipo.equipofk = e.id_equipo WHERE id_escuela = '$varsearch'
+GROUP BY equipofk,nombre_equipo,fk_type_equipo");
+                                if ($sql->num_rows != 0) {
+                                while ($row = $sql->fetch_object()) {
+                                ?>
                                 <div class="col-md-6 col-xxl-4">
                                     <!--begin::Card-->
                                     <div class="card">
-                                        <!--begin::Card body-->
+
                                         <div class="card-body d-flex flex-center flex-column py-9 px-5">
-                                            <!--begin::Avatar-->
-                                            <div class="symbol symbol-65px symbol-circle mb-5">
-                                                <img src="assets/media//avatars/300-11.jpg" alt="image"/>
-                                                <div class="bg-success position-absolute rounded-circle translate-middle start-100 top-100 border border-4 border-body h-15px w-15px ms-n3 mt-n3"></div>
-                                            </div>
-                                            <!--end::Avatar-->
-                                            <!--begin::Name-->
-                                            <a href="#" class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0">Nombre
-                                                de Jugador</a>
+                                            <?php
+                                            if ($row->fk_type_equipo == 1){
+                                                echo '<i class="ki-duotone ki-people fs-3hx">';
+                                                echo '<span class="path1"></span>';
+                                                echo '<span class="path2"></span>';
+                                                echo '<span class="path3"></span>';
+                                                echo '<span class="path4"></span>';
+                                                echo '<span class="path5"></span>';
+                                                echo '</i>';
+                                            }else{
+                                                echo '<i class="ki-duotone ki-user fs-3hx">';
+                                                echo '<span class="path1"></span>';
+                                                echo '<span class="path2"></span></i>';
+                                                echo '<span class="path5"></span>';
+                                                echo '</i>';
+
+                                            }
+
+                                            ?>
+
+                                            <a href="#" class="fs-4 text-gray-800 text-hover-primary fw-bold mb-0"><?php echo $row->NOMBRE_EQUIPO .'/'.$row->fk_type_equipo; ?></a>
+
                                             <!--end::Name-->
                                             <!--begin::Position-->
-                                            <div class="fw-semibold text-gray-400 mb-6">Equipos a los que pertenece
+                                            <div class="fw-semibold text-gray-400 mb-6"> Jugadores Totales: <?php echo $row->TOTAL ?>
                                             </div>
-                                            <!--end::Position-->
-                                            <!--begin::Info-->
-                                            <div class="d-flex flex-center flex-wrap mb-5">
-                                                <!--begin::Stats-->
-                                                <div class="border border-dashed rounded min-w-90px py-3 px-4 mx-2 mb-3">
-                                                    <div class="fs-6 fw-bold text-gray-700">32</div>
-                                                    <div class="fw-semibold text-gray-400">Goles</div>
+
+                                            <div class="me-0">
+                                                <button class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary"
+                                                        data-kt-menu-trigger="click"
+                                                        data-kt-menu-placement="bottom-end">
+                                                    <i class="ki-solid ki-dots-horizontal fs-2x me-1"></i>
+                                                </button>
+                                                <!--begin::Menu 3-->
+                                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px py-3"
+                                                     data-kt-menu="true">
+                                                    <!--begin::Heading-->
+                                                    <div class="menu-item px-3">
+                                                        <div class="menu-content text-muted pb-2 px-3 fs-7 text-uppercase">
+                                                            OPCIONES DEL EQUIPO
+                                                        </div>
+                                                    </div>
+                                                    <!--end::Menu item-->
+                                                    <!--begin::Menu item-->
+                                                    <div class="menu-item px-3"
+                                                         data-kt-menu-trigger="hover"
+                                                         data-kt-menu-placement="right-end">
+                                                        <a href="#" class="menu-link px-3">
+                                                            <span class="menu-title">Configuración</span>
+                                                            <span class="menu-arrow"></span>
+                                                        </a>
+                                                        <!--begin::Menu sub-->
+                                                        <div class="menu-sub menu-sub-dropdown w-175px py-4">
+                                                            <!--begin::Menu item-->
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Editar Nombre</a>
+                                                            </div>
+                                                            <!--end::Menu item-->
+                                                            <!--begin::Menu item-->
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3">Ver Jugadores</a>
+                                                            </div>
+                                                            <!--end::Menu item-->
+                                                            <!--begin::Menu item-->
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3">Eliminar equipo</a>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Menu sub-->
+                                                    </div>
+                                                    <!--end::Menu item-->
+                                                    <!--begin::Menu item-->
                                                 </div>
-                                                <!--end::Stats-->
-                                                <!--begin::Stats-->
-                                                <div class="border border-dashed rounded min-w-90px py-3 px-4 mx-2 mb-3">
-                                                    <div class="fs-6 fw-bold text-gray-700">1</div>
-                                                    <div class="fw-semibold text-gray-400">Faltas</div>
-                                                </div>
-                                                <!--end::Stats-->
+                                                <!--end::Menu 3-->
                                             </div>
-                                            <!--end::Info-->
-                                            <!--begin::Follow-->
-                                            <button class="btn btn-sm btn-light-primary btn-flex btn-center"
-                                                    data-kt-follow-btn="true">
-                                                <i class="ki-outline ki-check following fs-3"></i>
-                                                <i class="ki-outline ki-plus follow fs-3 d-none"></i>
-                                                <!--begin::Indicator label-->
-                                                <span class="indicator-label">Following</span>
-                                                <!--end::Indicator label-->
-                                                <!--begin::Indicator progress-->
-                                                <span class="indicator-progress">Please wait...
-														<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                <!--end::Indicator progress-->
-                                            </button>
-                                            <!--end::Follow-->
+
+
                                         </div>
-                                        <!--begin::Card body-->
+
                                     </div>
-                                    <!--begin::Card-->
+
                                 </div>
+                                <?php }
+                                } ?>
                                 <!--end::Col-->
                                 <!--end::Followers-->
                             </div>
                             <!--end::Row-->
                             <!--begin::Row(for show more)-->
                             <div class="row g-6 mb-6 g-xl-9 mb-xl-9 d-none" id="kt_followers_show_more_cards">
-
                             </div>
 
-
-                            <!--end::Row-->
-                            <!--begin::Show more-->
-                            <div class="d-flex flex-center">
-                                <button class="btn btn-primary" id="kt_followers_show_more_button">
-                                    <!--begin::Indicator label-->
-                                    <span class="indicator-label">Mostrar Más</span>
-                                    <!--end::Indicator label-->
-                                    <!--begin::Indicator progress-->
-                                    <span class="indicator-progress">Obteniendo...
-											<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                    <!--end::Indicator progress-->
-                                </button>
-                            </div>
-
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const jugadoresContainer = document.getElementById('jugadoresContainer');
-                                    const mostrarMasButton = document.getElementById('kt_followers_show_more_button');
-                                    const jugadoresPorPagina = 5;
-                                    let paginaActual = 5;
-
-                                    mostrarMasButton.addEventListener('click', function () {
-                                        // Realizar una solicitud AJAX para obtener más jugadores
-                                        const xhr = new XMLHttpRequest();
-                                        xhr.open('GET', '../../demo55/dist/pages/user-profile/php/obtener_jugadores.php?page=' + paginaActual, true);
-                                        xhr.onload = function () {
-                                            if (xhr.status === 200) {
-                                                const nuevosJugadoresHTML = xhr.responseText;
-                                                jugadoresContainer.innerHTML += nuevosJugadoresHTML;
-                                                paginaActual++;
-                                            } else {
-                                                console.error('Error al cargar más jugadores');
-                                            }
-                                        };
-                                        xhr.send();
-                                    });
-                                });
-                            </script>
-                            <!--end::Show more-->
                         </div>
                         <!--end::Content container-->
                     </div>
@@ -4663,7 +4687,7 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                 <!--begin::Heading-->
                                 <div class="mb-13">
                                     <!--begin::Title-->
-                                    <h2 class="mb-3">Escoje el tipo de equipo que crearas</h2>
+                                    <h2 class="mb-3">Escoge el tipo de equipo que crearas</h2>
                                     <!--end::Title-->
                                     <!--begin::Description-->
                                     <div class="text-muted fw-semibold fs-5">Al seleccionar por categoria solo se
@@ -4680,20 +4704,12 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                     <!--begin::Option-->
                                     <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6 mb-6 active">
                                         <!--begin::Input-->
-                                        <input class="btn-check" type="radio" checked="checked" name="type_team"
-                                               value="1" id="type_team"/>
+                                        <input class="btn-check" type="radio" name="type_team" value="1" id="type_team_1" />
                                         <!--end::Input-->
                                         <!--begin::Label-->
                                         <span class="d-flex">
 													<!--begin::Icon-->
-
- <i class="ki-duotone ki-people fs-3hx">
- <span class="path1"></span>
- <span class="path2"></span>
- <span class="path3"></span>
- <span class="path4"></span>
- <span class="path5"></span>
-</i>
+                                            <i class="ki-duotone ki-people fs-3hx"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
                                             <!--end::Icon-->
                                             <!--begin::Info-->
 													<span class="ms-4">
@@ -4708,15 +4724,12 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                     <!--begin::Option-->
                                     <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6">
                                         <!--begin::Input-->
-                                        <input class="btn-check" type="radio" name="type_team" value="2"
-                                               id="type_team"/>
+                                        <input class="btn-check" type="radio" name="type_team" value="2" id="type_team_2" />
                                         <!--end::Input-->
                                         <!--begin::Label-->
                                         <span class="d-flex">
 													<!--begin::Icon-->
-													<i class="ki-duotone ki-user fs-3hx">
- <span class="path1"></span>
- <span class="path2"></span>></i>
+													<i class="ki-duotone ki-user fs-3hx"><span class="path1"></span><span class="path2"></span>></i>
                                             <!--end::Icon-->
                                             <!--begin::Info-->
 													<span class="ms-4">
@@ -4789,7 +4802,7 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                 <!--begin::Heading-->
                                 <div class="mb-13">
                                     <!--begin::Title-->
-                                    <h2 class="mb-3">Esto es lo que tenemos!</h2>
+                                    <h2 class="mb-3">Esto es lo que tenemos</h2>
                                 </div>
                                 <div class="text-center px-4">
                                     <img src="assets/media/illustrations/sketchy-1/20.png" alt=""
@@ -4799,9 +4812,7 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                             </div>
                         </div>
                         <!--end::Complete-->
-
                     </form>
-
                     <script>
                         $(document).ready(function () {
                             // Manejar el evento de clic en el botón de envío del formulario
@@ -4809,7 +4820,8 @@ WHERE escuelasdefutbol.id_escuela = '$varsearch'");
                                 event.preventDefault(); // Prevenir el envío del formulario por defecto
                                 // DATOS DE LA ESCUELA
                                 var e_name_team = $("#name_team").val();
-                                var e_type_team = $("#type_team").val();
+                                var e_type_team = $("input[name='type_team']:checked").val();
+
 
                                 // PREPARAR DATOS A FORM
                                 var formData = new FormData();

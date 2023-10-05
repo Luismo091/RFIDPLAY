@@ -4,14 +4,13 @@ if (empty($_SESSION['mail'])) {
     header("location:error-403.html");
 }
 include('\laragon\www\RFIDPLAY\main\conexion.php');
-
 ?>
 <!DOCTYPE html>
 <html lang="ES">
 <!--begin::Head-->
 <head>
     <base href="../../../"/>
-    <title>Subir Escuelas y perfiles</title>
+    <title>Escenarios</title>
     <meta charset="utf-8"/>
     <link rel="shortcut icon" href="assets/media/logos/RFIDPLAY.svg"/>
     <!--begin::Fonts(mandatory for all pages)-->
@@ -25,6 +24,8 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
     <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css"/>
     <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
     <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <!--end::Global Stylesheets Bundle-->
     <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
 </head>
@@ -847,6 +848,68 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     </div>
                     <!--end::My apps links-->
                     <!--begin::Action-->
+                    <?php
+                    include('\laragon\www\RFIDPLAY\main\conexion.php');
+                    $idusu =$_SESSION['idusu'];
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu ");
+                    if ($sql->num_rows != 0) {
+                    while ($row = $sql->fetch_object()) {
+                    ?>
+                    <div class="app-navbar-item ms-1 ms-md-3">
+ <span class="badge badge-light-dark"> <?php echo $row->sensoruid; ?> <span class="material-symbols-outlined">
+battery_share
+</span>  <div id="ultimo-uid" style="display: none;"></span> </div>
+                </div>
+                <?php }
+                }else{ ?>
+                <div class="app-navbar-item ms-1 ms-md-3">
+                    <span class="badge badge-light-dark"> ?</span>
+
+                    <?php } ?>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
+
+                        function obtenerUltimoUid() {
+                            // URL donde se encuentra el JSON
+                            var jsonUrl = "../../demo55/dist/account/data.json";
+                            $.ajax({
+                                url: jsonUrl,
+                                dataType: "json",
+                                success: function(data) {
+                                    // Encontrar el último UID
+                                    var ultimoUid = data[data.length - 1];
+                                    var fechaActual = ultimoUid.date;
+
+                                    if (fechaActual !== fechaUltimoUid) {
+                                        // La fecha del último UID es diferente, mostrarlo
+                                        $("#ultimo-uid")
+                                            .text(ultimoUid.serial)  // Establecer el texto con el último UID
+                                            .fadeIn(1000)           // Animación de entrada
+                                            .delay(2000)            // Esperar 2 segundos
+                                            .fadeOut(1000);         // Animación de salida
+
+                                        // Actualizar la fecha del último UID mostrado
+                                        fechaUltimoUid = fechaActual;
+
+                                        // Almacenar la fecha en el almacenamiento local
+                                        localStorage.setItem("fechaUltimoUid", fechaActual);
+                                    }
+                                },
+                                error: function() {
+                                    console.error("Error al cargar el JSON desde la URL.");
+                                }
+                            });
+                        }
+
+                        // Llamar a la función para obtener el último UID inicialmente
+                        obtenerUltimoUid();
+
+                        // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
+                        setInterval(obtenerUltimoUid, 1000); // 5000 milisegundos = 5 segundos
+                    </script>
+
                     <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
@@ -932,7 +995,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                             <span class="menu-title">Sensores</span>
                                         </a>
 
-                                        <a class="menu-link active"
+                                        <a class="menu-link"
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escuela.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -960,6 +1023,14 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 														<span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Partidos</span>
+                                        </a>
+
+                                        <a class="menu-link active"
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-escenario.php">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+                                            <span class="menu-title">Escenarios</span>
                                         </a>
                                     </div>
                                 </div>
@@ -1128,17 +1199,17 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                 <!--begin::Page title-->
                                 <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
                                     <!--begin::Title-->
-                                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">Escuelas en RFIDPLAY</h1>
+                                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">Escenarios en RFIDPLAY</h1>
                                 </div>
                                 <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
                                     A-Z</h1>
                                 <!--end::Page title-->
                                 <!--begin::Actions-->
                                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                                    <input type="text" id="mySearch" onkeyup="myFunction()" class="form-control" placeholder="Buscar escuela...">
+                                    <input type="text" id="mySearch" onkeyup="myFunction()" class="form-control" placeholder="Buscar escenario...">
                                     <a href="#" class="btn btn-flex btn-primary h-40px fs-7 fw-bold"
                                        data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Añadir
-                                        Escuela</a>
+                                        Escenario</a>
                                 </div>
                                 <!--end::Actions-->
                             </div>
@@ -1156,55 +1227,56 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 
                                 <?php
                                 include('\laragon\www\RFIDPLAY\main\conexion.php');
-                                $sql = $mysqli->query("SELECT count(id_jugador) as total,nombre_escuela,ciudad,fotoes,direccion,e.id_escuela as ides FROM jugadores 
-    RIGHT JOIN rfidplay.escuelasdefutbol e on jugadores.id_escuela = e.id_escuela
-group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_escuela ASC ");
+                                $sql = $mysqli->query("SELECT * FROM camposdejuego");
                                 if ($sql->num_rows != 0) {
                                     while ($row = $sql->fetch_object()) {
                                         ?>
-
-                                        <div class="col-sm-6 col-xl-3 mb-xl-10">
+                                        <div class="col-sm-6 col-xl-6 mb-xl-10">
                                             <div class="card h-lg-100">
+                                                <div class="overlay overlay-show">
+                                                    <!--begin::Image-->
+                                                    <div class="bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-250px"
+                                                         style="background-image:url('data:image/jpg;base64,<?php echo base64_encode($row->fotoblob) ?>')"></div>
+                                                    <!--end::Image-->
+                                                    <!--begin::layer-->
+                                                    <div class="overlay-layer rounded bg-black" style="opacity: 0.1"></div>
+                                                    <!--end::layer-->
+                                                </div>
                                                 <!--begin::Body-->
                                                 <div class="card-body d-flex justify-content-between align-items-start flex-column">
                                                     <!--begin::Icon-->
-                                                    <a href="../../demo55/dist/pages/user-profile/followers.php?datosescue=<?php echo $row->ides; ?>">
 
-
-                                                    <div class="m-0">
-                                                        <div class="symbol symbol-50px me-5">
-                                                            <img src="data:image/jpg;base64,<?php echo base64_encode($row->fotoes) ?>">
-                                                            Ver
-                                                        </div>
-                                                    </div>
-
-                                                    </a>
                                                     <!--end::Icon-->
                                                     <!--begin::Section-->
                                                     <div class="d-flex flex-column my-7">
 
                                                         <!--begin::Number-->
-                                                        <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_escuela; ?></span>
+                                                        <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_campo; ?></span>
                                                         <!--end::Number-->
                                                         <!--begin::Follower-->
                                                         <div class="m-0">
                                                             <span class="fw-semibold fs-6 text-gray-400"><?php echo $row->ciudad; ?>, <?php echo $row->direccion; ?></span>
                                                         </div>
                                                         <!--end::Follower-->
+
                                                     </div>
-                                                    <!--end::Section-->
-                                                    <!--begin::Badge-->
-                                                    <span class="badge badge-light-success fs-base">
-													<i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>Jugadores Inscritos <?php echo $row->total; ?></span>
-                                                    <!--end::Badge-->
+
+
+
+                                                    <div>
+                                                        <!-- Botón de Editar -->
+                                                        <a href="#" class="btn btn-icon btn-secondary"><i class="bi bi-pencil fs-4 me-1"></i></a>
+                                                        <!-- Botón de Eliminar -->
+                                                            <a href="#" class="btn btn-danger hover-scale eliminarEnlace"
+                                                               data-idsensor="<?php echo $row->id_campo; ?>">Eliminar</a>
+                                                    </div>
+
                                                 </div>
+
                                                 <!--end::Body-->
                                             </div>
                                             <!--end::Card widget 2-->
                                         </div>
-
-
-
                                     <?php }
                                 }else{ ?>
 
@@ -1214,14 +1286,12 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 <!--begin::Heading-->
                                 <div class="card-px text-center pt-15 pb-15">
                                     <!--begin::Title-->
-                                    <h2 class="fs-2x fw-bold mb-0">Añade escuelas a Rfidplay</h2>
+                                    <h2 class="fs-2x fw-bold mb-0">Añade escenarios a Rfidplay</h2>
                                     <!--end::Title-->
                                     <!--begin::Description-->
-                                    <p class="text-gray-400 fs-4 fw-semibold py-7">Antes de empezar ten a la mano los
-                                        datos del representante legal de la escuela.</p>
+                                    <p class="text-gray-400 fs-4 fw-semibold py-7">Empieza buscando</p>
                                     <a href="#" class="btn btn-flex btn-primary h-40px fs-7 fw-bold"
-                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Añade
-                                        Escuelas</a>
+                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Anade Escenarios</a>
                                     <!--end::Description-->
                                     <!--begin::Action-->
 
@@ -1240,6 +1310,8 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                         </div>
                         <!--end::Content container-->
                     </div>
+
+
 
                     <script>
                         function myFunction() {
@@ -1268,6 +1340,43 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 }
                             }
                         }
+                    </script>
+                    <script>
+                        $(document).ready(function () {
+                            $(".eliminarEnlace").click(function (e) {
+                                e.preventDefault();
+
+                                var idSensor = $(this).data("idsensor");
+
+                                // Mostrar la confirmación antes de continuar con la eliminación
+                                Swal.fire({
+                                    title: 'Eliminar Sensor',
+                                    text: '¿Quieres eliminar este Sensor?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Sí, eliminar',
+                                    cancelButtonText: 'Cancelar',
+                                    buttonsStyling: false,
+                                    customClass: {
+                                        confirmButton: 'btn btn-danger',
+                                        cancelButton: 'btn btn-light'
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Si el usuario confirma, procedemos con la eliminación
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "../../demo55/dist/utilities/modals/wizards/php/elim_escen.php",
+                                            data: {idsensor: idSensor},
+                                            success: function (response) {
+                                                // Mostrar la respuesta del servidor en el área designada
+                                                $("#ajax-result").html(response);
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        });
                     </script>
 
                     <!--end::Content-->
@@ -3199,17 +3308,7 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                     <div class="stepper-nav justify-content-center py-2">
                         <!--begin::Step 1-->
                         <div class="stepper-item me-5 me-md-15 current" data-kt-stepper-element="nav">
-                            <h3 class="stepper-title">Datos sobre la escuela</h3>
-                        </div>
-                        <!--end::Step 1-->
-                        <!--begin::Step 2-->
-                        <div class="stepper-item me-5 me-md-15" data-kt-stepper-element="nav">
-                            <h3 class="stepper-title">Verifiquemos el entrenador y su perfil</h3>
-                        </div>
-                        <!--end::Step 2-->
-                        <!--begin::Step 3-->
-                        <div class="stepper-item me-5 me-md-15" data-kt-stepper-element="nav">
-                            <h3 class="stepper-title">Asignemos un R-ID para el</h3>
+                            <h3 class="stepper-title">Datos sobre el escenario</h3>
                         </div>
 
                         <div class="stepper-item" data-kt-stepper-element="nav">
@@ -3230,10 +3329,9 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 <!--begin::Heading-->
                                 <div class="pb-10 pb-lg-15">
                                     <!--begin::Title-->
-                                    <h2 class="fw-bold d-flex align-items-center text-dark">Añade los datos generales de
-                                        la escuela
+                                    <h2 class="fw-bold d-flex align-items-center text-dark">Añade los datos esenciales del escenario
                                         <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="El proceso consiste en ingresar los datos personales del jugador en la plataforma RFIDPLAY, detallando su información personal en un formato descriptivo.">
+                                              title="Ingresa el nombre y la ciudad y algunos datos del escenario.">
 												<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
 											</span></h2>
                                     <!--end::Title-->
@@ -3248,7 +3346,7 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 <!--begin::Input group-->
                                 <div class="mb-10 fv-row">
                                     <!--begin::Label-->
-                                    <label class="required form-label mb-3">Nombre de la escuela</label>
+                                    <label class="required form-label mb-3">Nombre del escenario</label>
                                     <span class="ms-1" data-bs-toggle="tooltip" title="Pon el nombre">
                                             <i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
                                             </span></h2>
@@ -3263,9 +3361,9 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
                                     <label class="d-block fw-semibold fs-6 mb-5">
-                                        <span class="required">Logo o escudo de la escuela</span>
+                                        <span class="required">Foto del lugar</span>
                                         <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="Selecciona una foto de la escuela">
+                                              title="Selecciona una foto del lugar">
 													<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
 												</span>
                                     </label>
@@ -3418,312 +3516,6 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                             </div>
                             <!--end::Wrapper-->
                         </div>
-                        <!--end::Step 1-->
-                        <!--begin::Step 2-->
-                        <div data-kt-stepper-element="content">
-                            <!--begin::Wrapper-->
-                            <div class="w-100">
-                                <!--begin::Heading-->
-                                <div class="pb-10 pb-lg-12">
-                                    <!--begin::Title-->
-                                    <h1 class="fw-bold text-dark">Datos del representante legal</h1>
-                                </div>
-
-                                <div class="mb-10 fv-row">
-                                    <!--begin::Label-->
-                                    <label class="required form-label mb-3">Nombre del Representante</label>
-                                    <span class="ms-1" data-bs-toggle="tooltip" title="Pon el nombre">
-                                            <i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-                                            </span></h2>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="text" class="form-control form-control-lg form-control-solid"
-                                           name="soccer_name_repre" placeholder="" value="" id="soccer_name_repre"/>
-                                    <!--end::Input-->
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <div class="fv-row mb-10">
-                                    <!--begin::Label-->
-                                    <label class="d-block fw-semibold fs-6 mb-5">
-                                        <span class="required">Foto del Representante</span>
-                                        <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="Selecciona una foto del representante">
-													<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-												</span>
-                                    </label>
-                                    <!--end::Label-->
-                                    <!--begin::Image input placeholder-->
-                                    <style>.image-input-placeholder {
-                                            background-image: url('assets/media/svg/files/blank-image.svg');
-                                        }
-
-                                        [data-bs-theme="dark"] .image-input-placeholder {
-                                            background-image: url('assets/media/svg/files/blank-image-dark.svg');
-                                        }</style>
-                                    <!--end::Image input placeholder-->
-                                    <!--begin::Image input-->
-                                    <div class="image-input image-input-empty image-input-outline image-input-placeholder"
-                                         data-kt-image-input="true">
-                                        <!--begin::Preview existing avatar-->
-                                        <div class="image-input-wrapper w-125px h-125px"></div>
-                                        <!--end::Preview existing avatar-->
-                                        <!--begin::Label-->
-                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                               data-kt-image-input-action="change" data-bs-toggle="tooltip"
-                                               title="Cambiar Foto de la escuela">
-                                            <i class="ki-outline ki-pencil fs-7"></i>
-                                            <!--begin::Inputs-->
-                                            <input type="file" name="r_foto" id="r_foto"
-                                                   accept=".png, .jpg, .jpeg"/>
-                                            <input type="hidden" name="avatar_remove"/>
-
-                                            <!--end::Inputs-->
-                                        </label>
-                                        <!--end::Label-->
-                                        <!--begin::Cancel-->
-                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                              data-kt-image-input-action="cancel" data-bs-toggle="tooltip"
-                                              title="Cancelar Foto de la escuela">
-													<i class="ki-outline ki-cross fs-2"></i>
-												</span>
-                                        <!--end::Cancel-->
-                                        <!--begin::Remove-->
-                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                              data-kt-image-input-action="remove" data-bs-toggle="tooltip"
-                                              title="Eliminar Foto de la escuela">
-													<i class="ki-outline ki-cross fs-2"></i>
-												</span>
-                                        <!--end::Remove-->
-                                    </div>
-                                    <!--end::Image input-->
-                                    <!--begin::Hint-->
-                                    <div class="form-text">RFIDPLAY acepta exclusivamente archivos de extensión
-                                        .jpg,.png,.jpeg
-                                    </div>
-                                    <!--end::Hint-->
-                                </div>
-
-                                <div class="d-flex fv-row mb-3"><!-- Wrap select and input in a flex container -->
-                                    <select class="form-select me-3" data-control="select2" id="tdoc" name="tdoc"
-                                            data-placeholder="Selecciona un tipo de documento">
-                                        <option></option>
-                                        <?php
-                                        $query = "SELECT idtiposdoc, tiposdoccol from tiposdoc";
-                                        $result = mysqli_query($mysqli, $query);
-
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            echo '<option value="' . $row['idtiposdoc'] . '">' . $row['tiposdoccol'] . '</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                    <input type="number" name="identificationc" class="form-control" id="iddocc"
-                                           aria-describedby="basic-addon1" placeholder="Número de documento"/>
-                                </div>
-
-                                <label class="fs-6 fw-semibold mb-2">Copia de cedula en PDF</label>
-
-                                <div class="fv-row mb-10">
-                                    <div class="mb-3">
-                                        <input class="form-control" type="file" id="documentopdf">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div data-kt-stepper-element="content">
-                            <!--begin::Wrapper-->
-                            <div class="w-100">
-                                <!--begin::Heading-->
-                                <div class="pb-10 pb-lg-12">
-                                    <!--begin::Title-->
-                                    <h1 class="fw-bold text-dark">RFID-ID CONCEDE ACCESO A RFIDPLAY</h1>
-                                </div>
-                                <!--end::Heading-->
-                                <!--begin::Input group-->
-                                <div class="fv-row mb-12">
-                                    <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Correo de acceso del representante
-                                        <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="Este es el correo que usara RFIDPLAY para todas las comunicaciones y brindar acceso a RFIDPLAY">
-												<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-											</span>
-                                    </label>
-
-                                    <div class="row g-9" data-kt-buttons="true"
-                                         data-kt-buttons-target="[data-kt-button='true']">
-                                        <!--begin::Col-->
-                                        <div class="col">
-                                            <div class="input-group mb-5">
-                                                 <span class="input-group-text" id="basic-addon1">
-                                                     <i class="ki-duotone ki-security-user">
- <i class="path1"></i>
- <i class="path2"></i>
-</i></span>
-                                                <input type="text" name="correor" class="form-control" id="correor"
-                                                       placeholder="Esperando Sensor" aria-label="Username"
-                                                       aria-describedby="basic-addon1"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--begin::Main wrapper-->
-                                    <div class="fv-row" data-kt-password-meter="true">
-                                        <!--begin::Wrapper-->
-                                        <div class="mb-1">
-                                            <!--begin::Label-->
-                                            <label class="form-label fw-semibold fs-6 mb-2">
-                                                Nueva Contraseña
-                                            </label>
-                                            <!--end::Label-->
-
-                                            <!--begin::Input wrapper-->
-                                            <div class="position-relative mb-1">
-                                                <div class="input-group mb-5">
-                                                 <span class="input-group-text" id="basic-addon1">
-                                                     <i class="ki-duotone ki-lock-2">
-                                                <i class="path1"></i>
-                                                <i class="path2"></i>
-                                                <i class="path3"></i>
-                                                <i class="path4"></i>
-                                                <i class="path5"></i>
-                                            </i></span>
-                                                    <input class="form-control form-control-lg form-control-solid"
-                                                           type="password" placeholder="" name="new_password" id="passwordInput"
-                                                           autocomplete="off"/>
-                                                </div>
-
-                                                <!--begin::Visibility toggle-->
-                                                <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
-                                                      data-kt-password-meter-control="visibility">
-                    <i class="ki-duotone ki-eye-slash fs-1"><span class="path1"></span><span class="path2"></span><span
-                                class="path3"></span><span class="path4"></span></i>
-                    <i class="ki-duotone ki-eye d-none fs-1"><span class="path1"></span><span class="path2"></span><span
-                                class="path3"></span></i>
-            </span>
-                                                <!--end::Visibility toggle-->
-                                            </div>
-
-
-                                            <!--end::Input wrapper-->
-
-                                            <!--begin::Highlight meter-->
-                                            <div class="d-flex align-items-center mb-1"
-                                                 data-kt-password-meter-control="highlight">
-                                                <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
-                                                <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
-                                                <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
-                                                <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"></div>
-                                            </div>
-                                            <!--end::Highlight meter-->
-                                        </div>
-                                        <!--end::Wrapper-->
-
-                                        <!--begin::Hint-->
-                                        <div class="text-muted">
-                                            Contraseña Segura
-                                        </div>
-                                        <!--end::Hint-->
-                                    </div>
-
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            const passwordInput = document.getElementById('passwordInput');
-                                            const idDocInput = document.getElementById('iddocc');
-                                            const togglePasswordVisibility = document.getElementById('togglePasswordVisibility');
-
-                                            idDocInput.addEventListener('input', generatePassword);
-
-                                            function generatePassword() {
-                                                const baseWords = 'RFIDPLAY' + idDocInput.value;
-                                                const password = generateSecurePassword(baseWords);
-                                                passwordInput.value = password;
-                                            }
-
-                                            function generateSecurePassword(baseWords) {
-                                                const symbols = '@R-FIDPLAY';
-                                                const allCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' + symbols;
-
-                                                let generatedPassword = '';
-                                                for (let i = 0; i < 12; i++) { // Genera una contraseña de longitud 12 :)
-                                                    const randomIndex = Math.floor(Math.random() * allCharacters.length);
-                                                    generatedPassword += allCharacters.charAt(randomIndex);
-                                                }
-
-                                                return generatedPassword;
-                                            }
-                                        });
-                                    </script>
-                                    <div class="separator my-10"></div>
-                                    <!--end::Main wrapper-->
-
-                                    <!--End::Label-->
-                                    <!--begin::Row-->
-                                    <div class="row g-9" data-kt-buttons="true"
-                                         data-kt-buttons-target="[data-kt-button='true']">
-                                        <!--begin::Col-->
-                                        <div class="col">
-                                            <label class="fs-6 fw-semibold mb-2">R-CODE
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                      title="Codigo de la etiqueta RFID enlazada">
-												<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-											</span>
-                                            </label>
-                                            <div class="input-group mb-5">
-                                                 <span class="input-group-text" id="basic-addon1">
-                                                     <i class="ki-duotone ki-wifi-square">
- <i class="path1"></i>
- <i class="path2"></i>
- <i class="path3"></i>
- <i class="path4"></i>
-</i>
-                                                                     </span>
-                                                <input type="text" name="uidcard" class="form-control" id="sensorInput"
-                                                       placeholder="Esperando Sensor" aria-label="Username"
-                                                       aria-describedby="basic-addon1"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <script>
-                                // Función para realizar la solicitud AJAX y verificar el JSON
-                                function checkSensor() {
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.open("GET", "../../demo55/dist/account/data.json", true);
-                                    xhr.onreadystatechange = function () {
-                                        if (xhr.readyState === 4 && xhr.status === 200) {
-                                            var jsonData = JSON.parse(xhr.responseText);
-                                            if (jsonData.length > 0) {
-                                                var nodeMCUId = jsonData[jsonData.length - 1].nodeMCUId;
-                                                var serial = jsonData[jsonData.length - 1].serial;
-
-                                                // Verifica en la base de datos usando PHP
-                                                var xhr2 = new XMLHttpRequest();
-                                                xhr2.open("GET", "../../demo55/dist/utilities/modals/wizards/php/sensor.php?nodeMCUId=" + nodeMCUId + "&serial=" + serial, true);
-                                                xhr2.onreadystatechange = function () {
-                                                    if (xhr2.readyState === 4 && xhr2.status === 200) {
-                                                        var response = xhr2.responseText;
-                                                        if (response !== "false") {
-                                                            document.getElementById("sensorInput").value = response;
-                                                        } else {
-                                                            showSweetAlert("No se ha encontrado un sensor RPLAY REGISTRADO");
-                                                        }
-                                                    }
-                                                };
-                                                xhr2.send();
-                                            }
-                                        }
-                                    };
-                                    xhr.send();
-                                }
-
-                                setInterval(checkSensor, 1000);
-                            </script>
-
-
-                            <!--end::Wrapper-->
-                        </div>
                         <div data-kt-stepper-element="content">
                             <!--begin::Wrapper-->
                             <div class="w-100">
@@ -3793,64 +3585,30 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 var a_adress = $("input[name='dirr_es']").val();
                                 var a_city = $("#select-ciudad").val();
 
-                                // DATOS DEL ENTRENADOR
-                                var e_s_name = $("input[name='soccer_name_repre']").val();
-                                var e_shield_f = $("#r_foto")[0].files[0];
-
-                                var e_tipodoc = $("#tdoc").val();
-                                var e_identificationcode = $("input[name='identificationc']").val();
-
-                                var e_doc_pdf = $("#documentopdf")[0].files[0];
-                                var ee_mail = $("input[name='correor']").val();
-                                var ee_pass = $("input[name='new_password']").val();
-                                var e_rfidsensro = $("input[name='uidcard']").val();
-
-
                                 var formData = new FormData();
                                 formData.append("a_soccer_name", a_soccer_name);
                                 formData.append("a_shield_f", a_shield_f);
                                 formData.append("a_adress", a_adress);
                                 formData.append("a_city", a_city);
 
-                                formData.append("e_s_name", e_s_name);
-                                formData.append("e_shield_f", e_shield_f);
-                                formData.append("e_tipodoc", e_tipodoc);
-                                formData.append("e_identificationcode", e_identificationcode);
-                                formData.append("e_doc_pdf", e_doc_pdf);
-                                formData.append("ee_mail", ee_mail);
-                                formData.append("ee_pass", ee_pass);
-                                formData.append("e_rfidsensro", e_rfidsensro);
-
-// Construir el texto que se mostrará en el div antes de enviar la solicitud AJAX
-                                // Construir el texto que se mostrará en el div antes de enviar la solicitud AJAX
                                 dataToShow = `
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <strong>Nombre dela escuela:</strong><br>
+                        <strong>Nombre del escenario:</strong><br>
                         ${a_soccer_name}
                     </div>
 <div class="col-md-6">
-                        <strong>Nombre dela escuela:</strong><br>
+                        <strong>Direccion:</strong><br>
                         ${a_adress}
                     </div>
 <div class="col-md-6">
-                        <strong>Nombre dela escuela:</strong><br>
+                        <strong>Ciudad</strong><br>
                         ${a_city}
-                    </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <strong>Archivo PDF seleccionado:</strong><br>
-                        ${a_shield_f ? a_shield_f.name : "Ninguno"}
-                    </div>
-
-                </div>`;
-
-
+                    </div>`;
                                 $("#datosMostrados").html(dataToShow);
-
                                 // Enviar la solicitud AJAX
                                 $.ajax({
-                                    url: "../../demo55/dist/utilities/modals/wizards/php/guardar_esco.php", // Ruta al archivo PHP que manejará la inserción
+                                    url: "../../demo55/dist/utilities/modals/wizards/php/guardar_esce.php", // Ruta al archivo PHP que manejará la inserción
                                     type: "POST",
                                     data: formData,
                                     processData: false,
@@ -3858,16 +3616,9 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                     success: function (response) {
                                         console.log(response);
 
-                                        const jsConfetti = new JSConfetti();
-
-                                        jsConfetti.addConfetti({
-                                            emojis: ['🥵', '⚡️', '💥', '✨', '⚽', '✨'],
-                                        })
-                                        jsConfetti.addConfetti();
-
 
                                         Swal.fire({
-                                            text: 'Datos de usuarios guardados',
+                                            text: 'Datos del escenarios guardados',
                                             icon: 'success',
                                             buttonsStyling: false,
                                             confirmButtonText: 'Entendido',
@@ -3876,17 +3627,17 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                             }
                                         }).then(function () {
                                             // Cierra el modal al hacer clic en 'Entendido'
-
+                                            const jsConfetti = new JSConfetti();
                                             $('#kt_modal_create_campaign').modal('hide');
                                             jsConfetti.addConfetti({
-                                                emojis: ['⚽', '⚡️', '🏆', '✨', '⚽', '😉'],
+                                                emojis: ['⚽', '⚡️', '🏆', '✨', '⚽'],
                                             })
                                             jsConfetti.addConfetti();
 
                                             $('#kt_modal_create_campaign').on('hidden.bs.modal', function () {
                                                 setTimeout(function () {
                                                     location.reload(); // Recarga la página para reiniciar el modal
-                                                }, 3000); // 3000 milisegundos (3 segundos)
+                                                }, 2000); // 3000 milisegundos (3 segundos)
                                             });
                                         });
 

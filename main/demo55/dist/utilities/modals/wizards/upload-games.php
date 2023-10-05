@@ -10,7 +10,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 <!--begin::Head-->
 <head>
     <base href="../../../"/>
-    <title>Escenarios</title>
+    <title>Partidos</title>
     <meta charset="utf-8"/>
     <link rel="shortcut icon" href="assets/media/logos/RFIDPLAY.svg"/>
     <!--begin::Fonts(mandatory for all pages)-->
@@ -24,6 +24,11 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
     <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css"/>
     <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
     <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <!--end::Global Stylesheets Bundle-->
     <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
 </head>
@@ -504,7 +509,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                                 <span class="w-70px badge badge-light-danger me-4">500 ERR</span>
                                                 <!--end::Code-->
                                                 <!--begin::Title-->
-                                                <a href="#" class="text-gray-800 text-hover-primary fw-semibold">New
+                                                <a href="#" class="teFxt-gray-800 text-hover-primary fw-semibold">New
                                                     customer</a>
                                                 <!--end::Title-->
                                             </div>
@@ -846,6 +851,63 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     </div>
                     <!--end::My apps links-->
                     <!--begin::Action-->
+                    <?php
+                    include('\laragon\www\RFIDPLAY\main\conexion.php');
+                    $idusu = $_SESSION['idusu'];
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu ");
+                    if ($sql->num_rows != 0) {
+                    while ($row = $sql->fetch_object()) {
+                    ?>
+                    <div class="app-navbar-item ms-1 ms-md-3">
+ <span class="badge badge-light-dark"> <?php echo $row->sensoruid; ?> <span class="material-symbols-outlined">
+battery_share
+</span>  <div id="ultimo-uid" style="display: none;"></span></div>
+                </div>
+                <?php }
+                }else{ ?>
+                <div class="app-navbar-item ms-1 ms-md-3">
+                    <span class="badge badge-light-dark"> ?</span>
+
+                    <?php } ?>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
+
+                        function obtenerUltimoUid() {
+                            // URL donde se encuentra el JSON
+                            var jsonUrl = "../../demo55/dist/account/data.json";
+                            $.ajax({
+                                url: jsonUrl,
+                                dataType: "json",
+                                success: function (data) {
+                                    // Encontrar el último UID
+                                    var ultimoUid = data[data.length - 1];
+                                    var fechaActual = ultimoUid.date;
+
+                                    if (fechaActual !== fechaUltimoUid) {
+                                        $("#ultimo-uid")
+                                            .text(ultimoUid.serial)  // Establecer el texto con el último UID
+                                            .fadeIn(1000)           // Animación de entrada
+                                            .delay(2000)            // Esperar 2 segundos
+                                            .fadeOut(1000);         // Animación de salida
+                                        fechaUltimoUid = fechaActual;
+
+                                        localStorage.setItem("fechaUltimoUid", fechaActual);
+                                    }
+                                },
+                                error: function () {
+                                    console.error("Error al cargar el JSON desde la URL.");
+                                }
+                            });
+                        }
+
+                        // Llamar a la función para obtener el último UID inicialmente
+                        obtenerUltimoUid();
+
+                        // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
+                        setInterval(obtenerUltimoUid, 1000); // 5000 milisegundos = 5 segundos
+                    </script>
                     <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
@@ -855,7 +917,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                         function actualizarHora() {
                             const elementoHora = document.querySelector('#hora-span');  // Usamos el ID para seleccionar el elemento
                             const horaActual = new Date();
-                            const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const formatoHora = horaActual.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
                             elementoHora.textContent = formatoHora;
                         }
 
@@ -953,21 +1015,22 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 													</span>
                                             <span class="menu-title">Verificar RFID</span>
                                         </a>
-                                        <a class="menu-link"
-                                           href="../../demo55/dist/utilities/modals/wizards/create-account.php">
+                                        <a class="menu-link active"
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-games.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Partidos</span>
                                         </a>
 
-                                        <a class="menu-link active"
+                                        <a class="menu-link"
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escenario.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Escenarios</span>
                                         </a>
+
                                     </div>
                                 </div>
 
@@ -1135,14 +1198,16 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                 <!--begin::Page title-->
                                 <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
                                     <!--begin::Title-->
-                                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">Escenarios en RFIDPLAY</h1>
+                                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
+                                        Escenarios en RFIDPLAY</h1>
                                 </div>
                                 <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
                                     A-Z</h1>
                                 <!--end::Page title-->
                                 <!--begin::Actions-->
                                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                                    <input type="text" id="mySearch" onkeyup="myFunction()" class="form-control" placeholder="Buscar escenario...">
+                                    <input type="text" id="mySearch" onkeyup="myFunction()" class="form-control"
+                                           placeholder="Buscar Partidos...">
                                     <a href="#" class="btn btn-flex btn-primary h-40px fs-7 fw-bold"
                                        data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Añadir
                                         Escenario</a>
@@ -1163,20 +1228,75 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 
                                 <?php
                                 include('\laragon\www\RFIDPLAY\main\conexion.php');
-                                $sql = $mysqli->query("SELECT * FROM camposdejuego");
+                                $sql = $mysqli->query("SELECT
+    e.nombre_escuela AS nombre_escuela_local,
+    e.fotoes AS shield_escuela_local,
+    e2.nombre_escuela AS nombre_escuela_visitante,
+    e2.fotoes AS shield_escuela_visitante,
+    equipos_local.nombre_equipo AS nombre_equipo_local,
+    equipos_visitante.nombre_equipo AS nombre_equipo_visitante,
+    camposdejuego.nombre_campo AS nombre_campo_local,
+    camposdejuego.fotoblob AS field_foto,
+    partidos.*
+FROM partidos
+         INNER JOIN equipos AS equipos_local ON partidos.id_equipo_local = equipos_local.id_equipo
+         INNER JOIN escuelasdefutbol AS e ON equipos_local.id_escuela = e.id_escuela
+         INNER JOIN equipos AS equipos_visitante ON partidos.id_equipo_visitante = equipos_visitante.id_equipo
+         INNER JOIN escuelasdefutbol AS e2 ON equipos_visitante.id_escuela = e2.id_escuela
+         INNER JOIN camposdejuego ON partidos.idcampojuego = camposdejuego.id_campo;");
                                 if ($sql->num_rows != 0) {
                                     while ($row = $sql->fetch_object()) {
                                         ?>
                                         <div class="col-sm-6 col-xl-6 mb-xl-10">
                                             <div class="card h-lg-100">
-                                                <div class="overlay overlay-show">
-                                                    <!--begin::Image-->
-                                                    <div class="bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-250px"
-                                                         style="background-image:url('data:image/jpg;base64,<?php echo base64_encode($row->fotoblob) ?>')"></div>
-                                                    <!--end::Image-->
-                                                    <!--begin::layer-->
-                                                    <div class="overlay-layer rounded bg-black" style="opacity: 0.1"></div>
-                                                    <!--end::layer-->
+
+                                                <div class="card-header pt-7">
+                                                    <h3 class="card-title align-items-start flex-column">
+                                                        <span class="card-label fw-bold text-gray-800"><?php echo $row->hora; ?></span>
+                                                        <span class="text-gray-400 mt-1 fw-semibold fs-6"><?php echo $row->fecha; ?></span>
+                                                    </h3>
+                                                    <div class="d-flex align-items-center justify-content-center">
+                                                        <div class="card-title align-items-lg-center flex-column"
+                                                             style="font-size: 1.9rem;">
+                <span class="text-gray-400 mt-1 fw-semibold fs-6"><?php if ($row->estado == 0) {
+                        echo '<span class="badge badge-light">Partido Pendiente/Programado</span>';
+                    }
+                    if ($row->estado == 1) {
+                        echo '<span class="badge badge-primary"><i class="fa-solid fa-rotate fa-spin" style="color: #ffffff;"></i>Esperando Jugadores</span>';
+                    }
+                    if ($row->estado == 2) {
+                        echo '<span class="badge badge-danger"> <i class="fa-solid fa-circle fa-fade" style="color: #ffffff;"> </i></i>EN VIVO</span>';
+                    }
+                    if ($row->estado == 3) {
+                        echo '<span class="badge badge-secundary"> </i></i>Finalizado el ' . $row->fecha_fi . ' a las ' . $row->hora_fi . '  </span>';
+                    } ?></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-toolbar">
+                                                        <span class="text-gray-400 mt-1 fw-semibold fs-6"><?php echo $row->nombre_campo_local; ?></span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body d-flex align-items-center justify-content-center px-0 pt-3 pb-5">
+                                                    <div class="d-flex align-items-center mr-4">
+                                                        <div class="mx-4"></div> <!-- Espacio entre texto y imagen -->
+                                                        <div class="circle-image">
+                                                            <img src="data:image/jpg;base64,<?php echo base64_encode($row->shield_escuela_local) ?>"
+                                                                 alt="Equipo 1"
+                                                                 class="rounded-circle" width="180" height="180">
+                                                        </div>
+                                                        <!-- Marcador del equipo 1 -->
+                                                    </div>
+                                                    <h2 class="mx-4" style="font-size: 2rem;">Vs</h2>
+                                                    <div class="d-flex align-items-center">
+                                                        <!-- Marcador del equipo 2 -->
+                                                        <div class="mx-4"></div> <!-- Espacio entre marcador y texto -->
+                                                        <div class="circle-image">
+                                                            <img src="data:image/jpg;base64,<?php echo base64_encode($row->shield_escuela_visitante) ?>"
+                                                                 alt="Equipo 2"
+                                                                 class="rounded-circle" width="180" height="180">
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                                 <!--begin::Body-->
                                                 <div class="card-body d-flex justify-content-between align-items-start flex-column">
@@ -1187,23 +1307,23 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                                     <div class="d-flex flex-column my-7">
 
                                                         <!--begin::Number-->
-                                                        <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_campo; ?></span>
+                                                        <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_escuela_local; ?> Vs <?php echo $row->nombre_escuela_visitante; ?> </span>
                                                         <!--end::Number-->
                                                         <!--begin::Follower-->
                                                         <div class="m-0">
-                                                            <span class="fw-semibold fs-6 text-gray-400"><?php echo $row->ciudad; ?>, <?php echo $row->direccion; ?></span>
+                                                            <span class="fw-semibold fs-6 text-gray-400">Equipos participantes: <?php echo $row->nombre_equipo_local; ?> Vs <?php echo $row->nombre_equipo_visitante; ?></span>
                                                         </div>
                                                         <!--end::Follower-->
 
                                                     </div>
 
-
                                                     <div>
                                                         <!-- Botón de Editar -->
-                                                        <a href="#" class="btn btn-icon btn-secondary"><i class="bi bi-pencil fs-4 me-1"></i></a>
+                                                        <a href="#" class="btn btn-icon btn-secondary"><i
+                                                                    class="bi bi-pencil fs-4 me-1"></i></a>
                                                         <!-- Botón de Eliminar -->
-                                                            <a href="#" class="btn btn-danger hover-scale eliminarEnlace"
-                                                               data-idsensor="<?php echo $row->id_campo; ?>">Eliminar</a>
+                                                        <a href="#" class="btn btn-danger hover-scale eliminarEnlace"
+                                                           data-idsensor="<?php echo $row->id_campo; ?>">Eliminar</a>
                                                     </div>
                                                 </div>
 
@@ -1220,12 +1340,13 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                 <!--begin::Heading-->
                                 <div class="card-px text-center pt-15 pb-15">
                                     <!--begin::Title-->
-                                    <h2 class="fs-2x fw-bold mb-0">Añade escenarios a Rfidplay</h2>
+                                    <h2 class="fs-2x fw-bold mb-0">Planifica Partidos en RFIDPLAY</h2>
                                     <!--end::Title-->
                                     <!--begin::Description-->
                                     <p class="text-gray-400 fs-4 fw-semibold py-7">Empieza buscando</p>
                                     <a href="#" class="btn btn-flex btn-primary h-40px fs-7 fw-bold"
-                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Anade Escenarios</a>
+                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Anade
+                                        Escenarios</a>
                                     <!--end::Description-->
                                     <!--begin::Action-->
 
@@ -1244,7 +1365,6 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                         </div>
                         <!--end::Content container-->
                     </div>
-
 
 
                     <script>
@@ -1284,8 +1404,8 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 
                                 // Mostrar la confirmación antes de continuar con la eliminación
                                 Swal.fire({
-                                    title: 'Eliminar Sensor',
-                                    text: '¿Quieres eliminar este Sensor?',
+                                    title: 'Eliminar Partido',
+                                    text: '¿Quieres eliminar este partido?',
                                     icon: 'warning',
                                     showCancelButton: true,
                                     confirmButtonText: 'Sí, eliminar',
@@ -1297,7 +1417,6 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                     }
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        // Si el usuario confirma, procedemos con la eliminación
                                         $.ajax({
                                             type: "POST",
                                             url: "../../demo55/dist/utilities/modals/wizards/php/elim_escen.php",
@@ -3225,7 +3344,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
             <!--begin::Modal header-->
             <div class="modal-header py-7 d-flex justify-content-between">
                 <!--begin::Modal title-->
-                <h2>Crear Escuela</h2>
+                <h2>Planifica Partidos en RFIDPLAY y añadelos</h2>
                 <!--end::Modal title-->
                 <!--begin::Close-->
                 <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
@@ -3242,9 +3361,14 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     <div class="stepper-nav justify-content-center py-2">
                         <!--begin::Step 1-->
                         <div class="stepper-item me-5 me-md-15 current" data-kt-stepper-element="nav">
-                            <h3 class="stepper-title">Datos sobre el escenario</h3>
+                            <h3 class="stepper-title">Equipos Particpantes</h3>
                         </div>
-
+                        <!--end::Step 1-->
+                        <!--begin::Step 2-->
+                        <div class="stepper-item me-5 me-md-15" data-kt-stepper-element="nav">
+                            <h3 class="stepper-title">Fecha,Hora y Lugar</h3>
+                        </div>
+                        <!--end::Step 2-->
                         <div class="stepper-item" data-kt-stepper-element="nav">
                             <h3 class="stepper-title">Listo</h3>
                         </div>
@@ -3254,202 +3378,232 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
                     <!--begin::Form-->
-                    <form class="mx-auto w-100 mw-600px pt-15 pb-10" novalidate="novalidate"
-                          id="kt_modal_create_campaign_stepper_form " enctype="multipart/form-data">
+                    <form class="mx-auto w-100 mw-600px pt-15 pb-10" novalidate="novalidate" id="kt_modal_create_campaign_stepper_form " enctype="multipart/form-data">
                         <!--begin::Step 1-->
                         <div class="current" data-kt-stepper-element="content">
                             <!--begin::Wrapper-->
                             <div class="w-100">
+                                <!--begin::Input group-->
+                                <div class="mb-10 fv-row">
+                                    <div class="row">
+                                        <div class="pb-10 pb-lg-15">
+                                            <!--begin::Title-->
+                                            <h2 class="fw-bold d-flex align-items-center text-dark">Añade los equipos participantes
+                                                <span class="ms-1" data-bs-toggle="tooltip" title="Agrega los equipos que participarán en el evento, especificando su información en un formato descriptivo.">
+            <i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
+        </span>
+                                            </h2>
+                                            <!--end::Title-->
+                                            <!--begin::Notice-->
+                                            <div class="text-muted fw-semibold fs-6">Si necesitas ayuda con este proceso, visita nuestra
+                                                <a href="#" class="link-primary fw-bold">Página de ayuda</a>.
+                                            </div>
+                                            <!--end::Notice-->
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="required fw-semibold fs-6 mb-5">Selecciona el equipo 1</label>
+                                            <div class="text-center mb-4">
+                                                <style>.image-input-placeholder {
+                                                        background-image: url('assets/media/svg/files/blank-image.svg');
+                                                    }
+                                                    [data-bs-theme="dark"] .image-input-placeholder {
+                                                        background-image: url('assets/media/svg/files/blank-image-dark.svg');
+                                                    }</style>
+                                                <div id="school1-image"
+                                                     class="image-input image-input-empty image-input-outline image-input-placeholder mx-auto"
+                                                     data-kt-image-input="true">
+                                                    <div class="image-input-wrapper w-125px h-125px"></div>
+                                                </div>
+                                            </div>
+                                            <select id="select-school-1" class="form-select mb-3" data-control="select2"
+                                                    data-placeholder="Elige la Escuela 1">
+                                                <!-- Populate options dynamically with PHP -->
+                                                <?php
+                                                $query = "SELECT id_escuela, nombre_escuela FROM escuelasdefutbol";
+                                                $result = mysqli_query($mysqli, $query);
+
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    echo '<option value="' . $row['id_escuela'] . '">' . $row['nombre_escuela'] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                            <select id="select-teams-1" name="select-teams-1" class="form-select mb-3" data-control="select2"
+                                                    data-placeholder="Equipos de la Escuela 1">
+                                                <option></option>
+                                            </select>
+                                        </div>
+
+                                        <!-- School 2 Fields -->
+                                        <div class="col-md-6">
+                                            <label class="required fw-semibold fs-6 mb-5">Selecciona el equipo 2</label>
+                                            <div class="text-center mb-4">
+                                                <!-- Centered Image Placeholder for School 2 -->
+                                                <div id="school2-image"
+                                                     class="image-input image-input-empty image-input-outline image-input-placeholder mx-auto"
+                                                     data-kt-image-input="true">
+                                                    <div class="image-input-wrapper w-125px h-125px"></div>
+                                                </div>
+                                            </div>
+                                            <select id="select-school-2"  class="form-select mb-3" data-control="select2"
+                                                    data-placeholder="Elige la Escuela 2">
+                                                <!-- Populate options dynamically with PHP -->
+                                                <?php
+                                                $result = mysqli_query($mysqli, $query); // Reuse the same query
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    echo '<option value="' . $row['id_escuela'] . '">' . $row['nombre_escuela'] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                            <select id="select-teams-2" name="select-teams-2" class="form-select mb-3" data-control="select2"
+                                                    data-placeholder="Equipos de la Escuela 2">
+                                                <option></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                $(document).ready(function() {
+                                    // Function to update teams and school image based on selected school
+                                    function updateSchoolInfo(schoolSelect, teamsSelect, imageDiv) {
+                                        const selectedSchoolId = schoolSelect.val();
+
+                                        // AJAX request to get teams and school image
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "../../demo55/dist/utilities/modals/wizards/php/get_teams.php", // Modify the URL to the PHP script
+                                            data: { school_id: selectedSchoolId },
+                                            dataType: "json",
+                                            success: function(response) {
+                                                // Update teams select options
+                                                teamsSelect.empty();
+                                                teamsSelect.append('<option></option>');
+                                                response.teams.forEach(function(team) {
+                                                    teamsSelect.append('<option value="' + team.id + '">' + team.name + '</option>');
+                                                });
+
+                                                // Update school image
+                                                if (response.school_image) {
+                                                    imageDiv.html('<img src="data:image/jpeg;base64,' + response.school_image + '" class="img-fluid" />');
+                                                } else {
+                                                    imageDiv.html(''); // Clear the image if not available
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    // Event handler for School 1 select
+                                    $("#select-school-1").change(function() {
+                                        updateSchoolInfo($(this), $("#select-teams-1"), $("#school1-image"));
+                                    });
+
+                                    // Event handler for School 2 select
+                                    $("#select-school-2").change(function() {
+                                        updateSchoolInfo($(this), $("#select-teams-2"), $("#school2-image"));
+                                    });
+                                });
+                            </script>
+                            <!--end::Wrapper-->
+                        </div>
+                        <!--end::Step 1-->
+                        <!--begin::Step 2-->
+                        <div data-kt-stepper-element="content">
+                            <!--begin::Wrapper-->
+                            <div class="w-100">
                                 <!--begin::Heading-->
-                                <div class="pb-10 pb-lg-15">
+                                <div class="pb-10 pb-lg-12">
                                     <!--begin::Title-->
-                                    <h2 class="fw-bold d-flex align-items-center text-dark">Añade los datos esenciales del escenario
-                                        <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="Ingresa el nombre y la ciudad y algunos datos del escenario.">
-												<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-											</span></h2>
-                                    <!--end::Title-->
-                                    <!--begin::Notice-->
-                                    <div class="text-muted fw-semibold fs-6">Si necesitas ayuda con este proceso ve a
-                                        nuestra
-                                        <a href="#" class="link-primary fw-bold">Pagina de ayuda</a>.
+                                    <h1 class="fw-bold text-dark">Asigna una Fecha y hora de inicio para este evento</h1>
+                                </div>
+                                <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+                                <script src="assets/plugins/global/plugins.bundle.js"></script>
+                                <div class="d-flex fv-row mb-12">
+                                    <div class="mb-12">
+                                        <label for="" class="form-label">Selecciona una Fecha y Hora para el partido</label>
+                                        <div class="d-flex">
+                                            <input class="form-control form-control-solid" placeholder="Selecciona una Fecha y Hora" id="kt_datepicker_3" />
+                                        </div>
                                     </div>
-                                    <!--end::Notice-->
-                                </div>
-                                <!--end::Heading-->
-                                <!--begin::Input group-->
-                                <div class="mb-10 fv-row">
-                                    <!--begin::Label-->
-                                    <label class="required form-label mb-3">Nombre del escenario</label>
-                                    <span class="ms-1" data-bs-toggle="tooltip" title="Pon el nombre">
-                                            <i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-                                            </span></h2>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="text" class="form-control form-control-lg form-control-solid"
-                                           name="soccer_name" placeholder="" value="" id="soccer_name"/>
-                                    <!--end::Input-->
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <div class="fv-row mb-10">
-                                    <!--begin::Label-->
-                                    <label class="d-block fw-semibold fs-6 mb-5">
-                                        <span class="required">Foto del lugar</span>
-                                        <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="Selecciona una foto del lugar">
-													<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-												</span>
-                                    </label>
-                                    <!--end::Label-->
-                                    <!--begin::Image input placeholder-->
-                                    <style>.image-input-placeholder {
-                                            background-image: url('assets/media/svg/files/blank-image.svg');
-                                        }
-
-                                        [data-bs-theme="dark"] .image-input-placeholder {
-                                            background-image: url('assets/media/svg/files/blank-image-dark.svg');
-                                        }</style>
-                                    <!--end::Image input placeholder-->
-                                    <!--begin::Image input-->
-                                    <div class="image-input image-input-empty image-input-outline image-input-placeholder"
-                                         data-kt-image-input="true">
-                                        <!--begin::Preview existing avatar-->
-                                        <div class="image-input-wrapper w-125px h-125px"></div>
-                                        <!--end::Preview existing avatar-->
-                                        <!--begin::Label-->
-                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                               data-kt-image-input-action="change" data-bs-toggle="tooltip"
-                                               title="Cambiar Foto de la escuela">
-                                            <i class="ki-outline ki-pencil fs-7"></i>
-                                            <!--begin::Inputs-->
-                                            <input type="file" name="soccer_shield" id="soccer_shield" accept=".png, .jpg, .jpeg"/>
-                                            <input type="hidden" name="avatar_remove"/>
-
-                                            <!--end::Inputs-->
-                                        </label>
-                                        <!--end::Label-->
-                                        <!--begin::Cancel-->
-                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                              data-kt-image-input-action="cancel" data-bs-toggle="tooltip"
-                                              title="Cancelar Foto de la escuela">
-													<i class="ki-outline ki-cross fs-2"></i>
-												</span>
-                                        <!--end::Cancel-->
-                                        <!--begin::Remove-->
-                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                              data-kt-image-input-action="remove" data-bs-toggle="tooltip"
-                                              title="Eliminar Foto de la escuela">
-													<i class="ki-outline ki-cross fs-2"></i>
-												</span>
-                                        <!--end::Remove-->
-                                    </div>
-                                    <!--end::Image input-->
-                                    <!--begin::Hint-->
-                                    <div class="form-text">RFIDPLAY acepta exclusivamente archivos de extensión
-                                        .jpg,.png,.jpeg
-                                    </div>
-                                    <!--end::Hint-->
-                                </div>
-
-                                <div class="mb-10 fv-row">
-                                    <!--begin::Label-->
-                                    <label class="required form-label mb-3">Datos Geograficos</label>
-                                    <span class="ms-1" data-bs-toggle="tooltip" title="Direccion y ciudad de la escuela de fútbol dejalos vacios si no los tienes">
-                                            <i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
-                                            </span></h2>
-                                </div>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                <div class="mb-10 fv-row">
-                                    <input type="text" class="form-control form-control-lg form-control-solid"
-                                           name="dirr_es" placeholder="" value="" id="dirr_es"/>
-                                </div>
-                                <div class="mb-10 fv-row">
-                                    <select id="select-pais" class="form-select" data-control="select2" data-placeholder="Selecciona un país">
-                                        <option></option>
-                                        <option value="colombia">Colombia</option>
-                                        <!-- Agrega más países aquí -->
-                                    </select>
-                                </div>
-                                <div class="mb-10 fv-row">
-                                    <select id="select-departamento" class="form-select" data-control="select2" data-placeholder="Selecciona un departamento" disabled>
-                                        <option></option>
-                                    </select>
-                                </div>
-                                <div class="mb-10 fv-row">
-                                    <select id="select-ciudad" class="form-select" data-control="select2" data-placeholder="Selecciona una ciudad" disabled>
-                                        <option></option>
-                                    </select>
-
                                     <script>
-                                        $(document).ready(function() {
-                                            $("#select-pais").select2();
-                                            $("#select-departamento").select2({ disabled: true });
-                                            $("#select-ciudad").select2({ disabled: true });
-
-                                            const departamentosPorPais = {
-                                                colombia: [
-                                                    { id: "amazonas", text: "Amazonas", ciudades: ["Leticia"] },
-                                                    { id: "antioquia", text: "Antioquia", ciudades: ["Medellín"] },
-                                                    { id: "arauca", text: "Arauca", ciudades: ["Arauca"] },
-                                                    { id: "atlantico", text: "Atlántico", ciudades: ["Barranquilla"] },
-                                                    { id: "bolivar", text: "Bolívar", ciudades: ["Cartagena de Indias"] },
-                                                    { id: "boyaca", text: "Boyacá", ciudades: ["Tunja"] },
-                                                    { id: "caldas", text: "Caldas", ciudades: ["Manizales"] },
-                                                    { id: "caqueta", text: "Caquetá", ciudades: ["Florencia"] },
-                                                    { id: "casanare", text: "Casanare", ciudades: ["Yopal"] },
-                                                    { id: "cauca", text: "Cauca", ciudades: ["Popayán"] },
-                                                    { id: "cesar", text: "Cesar", ciudades: ["Valledupar"] },
-                                                    { id: "choco", text: "Chocó", ciudades: ["Quibdó"] },
-                                                    { id: "cordoba", text: "Córdoba", ciudades: ["Montería"] },
-                                                    { id: "cundinamarca", text: "Cundinamarca", ciudades: ["Bogotá D.C."] },
-                                                    { id: "guainia", text: "Guainía", ciudades: ["Inírida"] },
-                                                    { id: "guaviare", text: "Guaviare", ciudades: ["San José del Guaviare"] },
-                                                    { id: "huila", text: "Huila", ciudades: ["Neiva"] },
-                                                    { id: "guajira", text: "La Guajira", ciudades: ["Riohacha"] },
-                                                    { id: "magdalena", text: "Magdalena", ciudades: ["Santa Marta"] },
-                                                    { id: "meta", text: "Meta", ciudades: ["Villavicencio"] },
-                                                    { id: "narino", text: "Nariño", ciudades: ["Pasto"] },
-                                                    { id: "norte-santander", text: "Norte de Santander", ciudades: ["Cúcuta"] },
-                                                    { id: "putumayo", text: "Putumayo", ciudades: ["Mocoa"] },
-                                                    { id: "quindio", text: "Quindío", ciudades: ["Armenia"] },
-                                                    { id: "risaralda", text: "Risaralda", ciudades: ["Pereira"] },
-                                                    { id: "san-andres", text: "San Andrés y Providencia", ciudades: ["San Andrés"] },
-                                                    { id: "santander", text: "Santander", ciudades: ["Bucaramanga"] },
-                                                    { id: "sucre", text: "Sucre", ciudades: ["Sincelejo"] },
-                                                    { id: "tolima", text: "Tolima", ciudades: ["Ibagué"] },
-                                                    { id: "valle", text: "Valle del Cauca", ciudades: ["Cali"] },
-                                                    { id: "vaupes", text: "Vaupés", ciudades: ["Mitú"] },
-                                                    { id: "vichada", text: "Vichada", ciudades: ["Puerto Carreño"] }
-                                                ]
-                                                // Agrega más países y sus departamentos aquí
-                                            };
-
-                                            $("#select-pais").on("select2:select", function(e) {
-                                                const paisSeleccionado = e.params.data.id;
-                                                const departamentos = departamentosPorPais[paisSeleccionado];
-
-                                                $("#select-departamento").empty().select2({ data: departamentos }).prop("disabled", false);
-                                                $("#select-ciudad").empty().select2({ data: [] }).prop("disabled", true);
-                                            });
-
-                                            $("#select-departamento").on("select2:select", function(e) {
-                                                const departamentoSeleccionado = e.params.data.id;
-                                                const ciudades = departamentosPorPais[$("#select-pais").val()].find(dep => dep.id === departamentoSeleccionado).ciudades;
-
-                                                $("#select-ciudad").empty().select2({ data: ciudades }).prop("disabled", false);
-                                            });
+                                        $("#kt_datepicker_3").flatpickr({
+                                            enableTime: true,
+                                            dateFormat: "Y-m-d H:i",
+                                            locale: {
+                                                firstDayOfWeek: 1, // Lunes como primer día de la semana
+                                                weekdays: {
+                                                    shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                                                    longhand: [
+                                                        "Domingo",
+                                                        "Lunes",
+                                                        "Martes",
+                                                        "Miércoles",
+                                                        "Jueves",
+                                                        "Viernes",
+                                                        "Sábado",
+                                                    ],
+                                                },
+                                                months: {
+                                                    shorthand: [
+                                                        "Ene",
+                                                        "Feb",
+                                                        "Mar",
+                                                        "Abr",
+                                                        "May",
+                                                        "Jun",
+                                                        "Jul",
+                                                        "Ago",
+                                                        "Sep",
+                                                        "Oct",
+                                                        "Nov",
+                                                        "Dic",
+                                                    ],
+                                                    longhand: [
+                                                        "Enero",
+                                                        "Febrero",
+                                                        "Marzo",
+                                                        "Abril",
+                                                        "Mayo",
+                                                        "Junio",
+                                                        "Julio",
+                                                        "Agosto",
+                                                        "Septiembre",
+                                                        "Octubre",
+                                                        "Noviembre",
+                                                        "Diciembre",
+                                                    ],
+                                                },
+                                            },
                                         });
                                     </script>
+                                </div>
+
+                                <div class="fv-row mb-10">
+                                    <!--begin::Label-->
+                                    <label class="form-label required">Campo enlazado</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <div class="d-flex">
+                                        <select name="campoe" class="form-select form-select-lg form-select-solid" data-control="select2" data-placeholder="Seleccione..." data-allow-clear="true" data-hide-search="true">
+                                            <?php
+                                            $query = "SELECT * FROM camposdejuego";
+                                            $result = mysqli_query($mysqli, $query);
+
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                echo '<option value="' . $row['id_campo'] . '">' . $row['nombre_campo'] . '</option>';
+                                            }
+
+                                            ?>
+                                        </select>
+                                    </div>
                                     <!--end::Input-->
                                 </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <!--end::Input group-->
                             </div>
                             <!--end::Wrapper-->
                         </div>
+                        <!--end::Step 2-->
+                        <!--begin::Step 3-->
+
                         <div data-kt-stepper-element="content">
                             <!--begin::Wrapper-->
                             <div class="w-100">
@@ -3459,7 +3613,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                     <h1 class="fw-bold text-dark">Datos recibidos esto es lo que tenemos</h1>
                                     <!--end::Title-->
                                     <!--begin::Description-->
-                                    <div class="fw-semibold text-muted fs-4">A</div>
+                                    <div class="fw-semibold text-muted fs-4">You will receive an email with with the summary of your newly created campaign!</div>
                                     <!--end::Description-->
                                 </div>
                                 <!--end::Heading-->
@@ -3472,112 +3626,126 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                                 <!--end::Actions-->
                                 <!--begin::Illustration-->
                                 <div class="text-center px-4">
-                                    <img src="assets/media/illustrations/sketchy-1/9.png" alt=""
-                                         class="mww-100 mh-350px"/>
+                                    <img src="assets/media/illustrations/sketchy-1/9.png" alt="" class="mww-100 mh-350px" />
                                 </div>
                                 <!--end::Illustration-->
                             </div>
                         </div>
+                        <!--end::Step 5-->
+                        <!--begin::Actions-->
                         <div class="d-flex flex-stack pt-10">
                             <!--begin::Wrapper-->
                             <div class="me-2">
-                                <button type="button" class="btn btn-lg btn-light-primary me-3"
-                                        data-kt-stepper-action="previous">
-                                    <i class="ki-outline ki-arrow-left fs-3 me-1"></i>Atrás
-                                </button>
+                                <button type="button" class="btn btn-lg btn-light-primary me-3" data-kt-stepper-action="previous">
+                                    <i class="ki-outline ki-arrow-left fs-3 me-1"></i>Atrás</button>
                             </div>
                             <!--end::Wrapper-->
                             <!--begin::Wrapper-->
                             <div>
-                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit"
-                                        id="submitFormButton">
+                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit" id="submitFormButton">
 											<span class="indicator-label">Subir
 											<i class="ki-outline ki-arrow-right fs-3 ms-2 me-0"></i></span>
                                     <span class="indicator-progress">Por favor espere...
 											<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                 </button>
-                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">
-                                    Continuar
+                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">Continuar
                                     <i class="ki-outline ki-arrow-right fs-3 ms-1 me-0"></i></button>
                             </div>
                             <!--end::Wrapper-->
                         </div>
+                        <!--end::Actions-->
                     </form>
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-
                     <script>
-                        $(document).ready(function () {
+                        $(document).ready(function() {
                             // Manejar el evento de clic en el botón de envío del formulario
-                            $("#submitFormButton").click(function (event) {
+                            $("#submitFormButton").click(function(event) {
                                 event.preventDefault(); // Prevenir el envío del formulario por defecto
 
+                                // Obtener los valores de los campos del formulario
+                                var selectedSchool1 = $("#select-school-1").val();
+                                var selectedSchool2 = $("#select-school-2").val();
+                                var selectedDate = $("#kt_datepicker_3").val();
+                                var selectedCampo = $("select[name='campoe']").val();
 
-                               // DATOS DE LA ESCUELA
-                                var a_soccer_name = $("input[name='soccer_name']").val();
-                                var a_shield_f = $("#soccer_shield")[0].files[0];
-                                var a_adress = $("input[name='dirr_es']").val();
-                                var a_city = $("#select-ciudad").val();
+                                // Obtener los equipos seleccionados
+                                var selectedTeams1 = $("#select-teams-1").val() || []; // Si no hay selecciones, establecerlo como un array vacío
+                                var selectedTeams2 = $("#select-teams-2").val() || []; // Si no hay selecciones, establecerlo como un array vacío
 
-                                var formData = new FormData();
-                                formData.append("a_soccer_name", a_soccer_name);
-                                formData.append("a_shield_f", a_shield_f);
-                                formData.append("a_adress", a_adress);
-                                formData.append("a_city", a_city);
-
+                                // Construir el texto que se mostrará en el div antes de enviar la solicitud AJAX
                                 dataToShow = `
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <strong>Nombre del escenario:</strong><br>
-                        ${a_soccer_name}
+                        <strong>Equipo 1 Seleccionado:</strong><br>
+                        ${selectedSchool1}
                     </div>
-<div class="col-md-6">
-                        <strong>Direccion:</strong><br>
-                        ${a_adress}
+                    <div class="col-md-6">
+                        <strong>Equipo 2 Seleccionado:</strong><br>
+                        ${selectedSchool2}
                     </div>
-<div class="col-md-6">
-                        <strong>Ciudad</strong><br>
-                        ${a_city}
-                    </div>`;
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <strong>Fecha y Hora Seleccionadas:</strong><br>
+                        ${selectedDate}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Campo enlazado:</strong><br>
+                        ${selectedCampo}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <strong>Equipos Seleccionados para Equipo 1:</strong><br>
+                        ${selectedTeams1.join(', ')}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Equipos Seleccionados para Equipo 2:</strong><br>
+                        ${selectedTeams2.join(', ')}
+                    </div>
+                </div>`;
+
                                 $("#datosMostrados").html(dataToShow);
+
+                                // Crear un objeto FormData para enviar los datos
+                                var formData = new FormData();
+                                formData.append("selectedSchool1", selectedSchool1);
+                                formData.append("selectedSchool2", selectedSchool2);
+                                formData.append("selectedDate", selectedDate);
+                                formData.append("selectedCampo", selectedCampo);
+                                formData.append("selectedTeams1", selectedTeams1.join(','));
+                                formData.append("selectedTeams2", selectedTeams2.join(','));
+
+
                                 // Enviar la solicitud AJAX
                                 $.ajax({
-                                    url: "../../demo55/dist/utilities/modals/wizards/php/guardar_esce.php", // Ruta al archivo PHP que manejará la inserción
+                                    url: "../../demo55/dist/utilities/modals/wizards/php/insert_data_game.php", // Reemplaza "ruta_al_php.php" con la ruta correcta a tu archivo PHP que procesa los datos
                                     type: "POST",
                                     data: formData,
                                     processData: false,
                                     contentType: false,
-                                    success: function (response) {
+                                    success: function(response) {
                                         console.log(response);
 
-
                                         Swal.fire({
-                                            text: 'Datos del escenarios guardados',
+                                            text: 'Datos guardados',
                                             icon: 'success',
                                             buttonsStyling: false,
                                             confirmButtonText: 'Entendido',
                                             customClass: {
                                                 confirmButton: 'btn btn-primary'
                                             }
-                                        }).then(function () {
+                                        }).then(function() {
                                             // Cierra el modal al hacer clic en 'Entendido'
-                                            const jsConfetti = new JSConfetti();
                                             $('#kt_modal_create_campaign').modal('hide');
-                                            jsConfetti.addConfetti({
-                                                emojis: ['⚽', '⚡️', '🏆', '✨', '⚽'],
-                                            })
-                                            jsConfetti.addConfetti();
 
+                                            // Reinicia el contenido del modal cuando se cierra
                                             $('#kt_modal_create_campaign').on('hidden.bs.modal', function () {
-                                                setTimeout(function () {
-                                                    location.reload(); // Recarga la página para reiniciar el modal
-                                                }, 2000); // 3000 milisegundos (3 segundos)
+                                                location.reload(); // Recarga la página para reiniciar el modal
                                             });
                                         });
-
-
                                     },
-                                    error: function (xhr, status, error) {
+                                    error: function(xhr, status, error) {
                                         // Manejar errores
                                         console.error(error);
                                     }

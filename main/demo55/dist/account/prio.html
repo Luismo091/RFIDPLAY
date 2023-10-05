@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu título aquí</title>
+    <title>Prueba de Busqueda de Gente</title>
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Incluir CSS y bibliotecas necesarias aquí -->
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="card mb-5 mb-xl-10">
+        <div id="datos-jugador">
+            <!-- Mensaje de carga inicial -->
+            <p>Cargando datos del jugador...</p>
+        </div>
+    </div>
+
+    <!-- Código JavaScript para actualizar los datos del jugador -->
+    <script>
+        function actualizarDatos() {
+            // Realizar una solicitud AJAX para recargar los datos
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Actualizar el contenido del div con los datos actualizados
+                    document.getElementById("datos-jugador").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "cargar_datos.php", true);
+            xhttp.send();
+        }
+
+        // Actualizar los datos cada 1 segundo (1000 milisegundos)
+        setInterval(actualizarDatos, 1000);
+    </script>
+</body>
+</html>
