@@ -62,5 +62,5 @@ jobs:
         with:
           app-name: 'rfidplay'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_37BA22DB1922476086CC3E2D84F62B61 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F8ABD7A3F7B7424DAB46DA370B5B9796 }}
           package: .
