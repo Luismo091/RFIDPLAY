@@ -1,4 +1,7 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
 session_start();
 if (empty($_SESSION['mail'])) {
     header("location:error-403.html");
@@ -844,6 +847,74 @@ if (empty($_SESSION['mail'])) {
                     </div>
                     <!--end::My apps links-->
                     <!--begin::Action-->
+                    <?php
+                    include('\laragon\www\RFIDPLAY\main\conexion.php');
+
+                    $idusu = $_SESSION['idusu'];
+
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu");
+
+                    if ($sql->num_rows != 0) {
+                        while ($row = $sql->fetch_object()) {
+                            ?>
+                            <div class="app-navbar-item ms-1 ms-md-3">
+                                <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span></span>
+                                <div id="ultimo-uid" style="display: none;"></div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="app-navbar-item ms-1 ms-md-3">
+                            <span class="badge badge-light-dark"></span>
+                        </div>
+                        <?php
+                    }
+                    ?>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
+
+                        function reproducirSonido() {
+                            var audio = new Audio('../../demo55/dist/account/recivedsound.mp3');
+                            audio.play();
+                        }
+
+                        function obtenerUltimoUid() {
+                            var jsonUrl = "../../demo55/dist/account/data.json?nocache=" + new Date().getTime();
+                            $.ajax({
+                                url: jsonUrl,
+                                dataType: "json",
+                                success: function (data) {
+                                    // Encontrar el último UID
+                                    var ultimoUid = data[data.length - 1];
+                                    var fechaActual = ultimoUid.date;
+
+                                    if (fechaActual !== fechaUltimoUid) {
+                                        // La fecha del último UID es diferente, mostrarlo
+                                        $("#ultimo-uid")
+                                            .text(ultimoUid.serial)
+                                            .fadeIn(1000)
+                                            .delay(2000) // Esperar 2 segundos
+                                            .fadeOut(1000); // Animación de salida
+                                        reproducirSonido();
+                                        fechaUltimoUid = fechaActual;
+                                        localStorage.setItem("fechaUltimoUid", fechaActual);
+                                    }
+                                },
+                                error: function () {
+                                    console.error("Error al cargar el JSON desde la URL.");
+                                }
+                            });
+                        }
+
+                        // Llamar a la función para obtener el último UID inicialmente
+                        obtenerUltimoUid();
+                        // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
+                        setInterval(obtenerUltimoUid, 5000); // 5000 milisegundos = 5 segundos
+                    </script>
+
                     <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
@@ -851,9 +922,9 @@ if (empty($_SESSION['mail'])) {
                     <script>
                         // Función para actualizar la hora en el elemento span
                         function actualizarHora() {
-                            const elementoHora = document.querySelector('#hora-span');  // Usamos el ID para seleccionar el elemento
+                            const elementoHora = document.querySelector('#hora-span'); // Usamos el ID para seleccionar el elemento
                             const horaActual = new Date();
-                            const formatoHora = horaActual.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                            const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             elementoHora.textContent = formatoHora;
                         }
 
@@ -921,7 +992,7 @@ if (empty($_SESSION['mail'])) {
                                     <!--begin:Menu item-->
                                     <div class="menu-item">
                                         <!--begin:Menu link-->
-                                        <a class="menu-link active"
+                                        <a class="menu-link"
                                            href="../../demo55/dist/utilities/modals/wizards/create-account.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -929,12 +1000,12 @@ if (empty($_SESSION['mail'])) {
                                             <span class="menu-title">Sensores</span>
                                         </a>
 
-                                        <a class="menu-link"
+                                        <a class="menu-link active"
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escuela.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
-                                            <span class="menu-title">Escuelas</span>
+                                            <span class="menu-title">Escuelas Escuelas Detalle - Jugadores</span>
                                         </a>
 
                                         <a class="menu-link"
@@ -948,13 +1019,12 @@ if (empty($_SESSION['mail'])) {
                                         <a class="menu-link"
                                            href="../../demo55/dist/account/gentesearch.php">
 													<span class="menu-bullet">
-														<span class="bullet bullet-dot"></span>
+			                                 <span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Verificar RFID</span>
                                         </a>
-
                                         <a class="menu-link"
-                                           href="../../demo55/dist/utilities/modals/wizards/create-account.php">
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-games.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
@@ -1534,9 +1604,11 @@ WHERE id_escuela = '$varsearch'");
                                                             <!--end::Heading-->
                                                             <!--begin::Menu item-->
                                                             <div class="menu-item px-3">
-                                                                <a class="menu-link px-3 open-cc-modal" data-player-id="<?php echo $row->id_jugador; ?>"
+                                                                <a class="menu-link px-3 open-cc-modal"
+                                                                   data-player-id="<?php echo $row->id_jugador; ?>"
                                                                    data-player-name="<?php echo $row->Nombre1 . ' ' . $row->Nombre2 . ' ' . $row->Ape1 . ' ' . $row->Ape2; ?>"
-                                                                   data-bs-toggle="modal" data-bs-target="#kt_modal_open_cc">VER CC</a>
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#kt_modal_open_cc">VER CC</a>
                                                             </div>
                                                             <!--end::Menu item-->
                                                             <!--begin::Menu item-->
@@ -4714,7 +4786,7 @@ WHERE id_escuela = '$varsearch'");
             $.ajax({
                 url: '../../demo55/dist/pages/user-profile/php/pdfse.php', // Replace with the actual URL to your PHP script
                 type: 'POST',
-                data: { player_id: playerId }, // Send the player ID to the server
+                data: {player_id: playerId}, // Send the player ID to the server
                 success: function (pdfUrl) {
                     // Update the src attribute of the <iframe> to display the PDF
                     var pdfViewer = $('#pdfViewer');
@@ -4754,7 +4826,7 @@ WHERE id_escuela = '$varsearch'");
             <!--begin::Modal header-->
             <div class="modal-header py-7 d-flex justify-content-between">
                 <!--begin::Modal title-->
-                <h2 id="playerFullName" >Copia de documento de </h2>
+                <h2 id="playerFullName">Copia de documento de </h2>
                 <!--end::Modal title-->
                 <!--begin::Close-->
                 <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
@@ -4784,7 +4856,7 @@ WHERE id_escuela = '$varsearch'");
                     <object id="pdfObject" type="application/pdf" width="100%" height="900">
                         <!-- Fallback content if the browser doesn't support PDF or PDF is not available -->
                         <div>No online PDF viewer installed</div>
-                    </object> 
+                    </object>
                     <!--begin::Fallback Message-->
                     <div id="fallbackMessage" class="card-body" style="display: none;">
                         <!--begin::Heading-->
@@ -4793,12 +4865,14 @@ WHERE id_escuela = '$varsearch'");
                             <h2 class="fs-2x fw-bold mb-0">No hay PDF's</h2>
                             <!--end::Title-->
                             <!--begin::Description-->
-                            <p class="text-gray-400 fs-4 fw-semibold py-7">Antes de empezar ten a la mano los datos del jugador.</p>
+                            <p class="text-gray-400 fs-4 fw-semibold py-7">Antes de empezar ten a la mano los datos del
+                                jugador.</p>
                         </div>
                         <!--end::Heading-->
                         <!--begin::Illustration-->
                         <div class="text-center pb-15 px-5">
-                            <img src="assets/media/illustrations/sketchy-1/addrfid.svg" alt="" class="mw-100 h-200px h-sm-325px"/>
+                            <img src="assets/media/illustrations/sketchy-1/addrfid.svg" alt=""
+                                 class="mw-100 h-200px h-sm-325px"/>
                         </div>
                         <!--end::Illustration-->
                     </div>

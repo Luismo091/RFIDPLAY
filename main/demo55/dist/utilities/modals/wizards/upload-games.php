@@ -1,4 +1,7 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
 session_start();
 if (empty($_SESSION['mail'])) {
     header("location:error-403.html");
@@ -853,30 +856,40 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     <!--begin::Action-->
                     <?php
                     include('\laragon\www\RFIDPLAY\main\conexion.php');
-                    $idusu = $_SESSION['idusu'];
-                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu ");
-                    if ($sql->num_rows != 0) {
-                    while ($row = $sql->fetch_object()) {
-                    ?>
-                    <div class="app-navbar-item ms-1 ms-md-3">
- <span class="badge badge-light-dark"> <?php echo $row->sensoruid; ?> <span class="material-symbols-outlined">
-battery_share
-</span>  <div id="ultimo-uid" style="display: none;"></span></div>
-                </div>
-                <?php }
-                }else{ ?>
-                <div class="app-navbar-item ms-1 ms-md-3">
-                    <span class="badge badge-light-dark"> ?</span>
 
-                    <?php } ?>
+                    $idusu = $_SESSION['idusu'];
+
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu");
+
+                    if ($sql->num_rows != 0) {
+                        while ($row = $sql->fetch_object()) {
+                            ?>
+                            <div class="app-navbar-item ms-1 ms-md-3">
+                                <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span></span>
+                                <div id="ultimo-uid" style="display: none;"></div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="app-navbar-item ms-1 ms-md-3">
+                            <span class="badge badge-light-dark"></span>
+                        </div>
+                        <?php
+                    }
+                    ?>
 
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
                         var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
 
+                        function reproducirSonido() {
+                            var audio = new Audio('../../demo55/dist/account/recivedsound.mp3');
+                            audio.play();
+                        }
+
                         function obtenerUltimoUid() {
-                            // URL donde se encuentra el JSON
-                            var jsonUrl = "../../demo55/dist/account/data.json";
+                            var jsonUrl = "../../demo55/dist/account/data.json?nocache=" + new Date().getTime();
                             $.ajax({
                                 url: jsonUrl,
                                 dataType: "json",
@@ -886,13 +899,14 @@ battery_share
                                     var fechaActual = ultimoUid.date;
 
                                     if (fechaActual !== fechaUltimoUid) {
+                                        // La fecha del último UID es diferente, mostrarlo
                                         $("#ultimo-uid")
-                                            .text(ultimoUid.serial)  // Establecer el texto con el último UID
-                                            .fadeIn(1000)           // Animación de entrada
-                                            .delay(2000)            // Esperar 2 segundos
-                                            .fadeOut(1000);         // Animación de salida
+                                            .text(ultimoUid.serial)
+                                            .fadeIn(1000)
+                                            .delay(2000) // Esperar 2 segundos
+                                            .fadeOut(1000); // Animación de salida
+                                        reproducirSonido();
                                         fechaUltimoUid = fechaActual;
-
                                         localStorage.setItem("fechaUltimoUid", fechaActual);
                                     }
                                 },
@@ -904,10 +918,10 @@ battery_share
 
                         // Llamar a la función para obtener el último UID inicialmente
                         obtenerUltimoUid();
-
                         // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
-                        setInterval(obtenerUltimoUid, 1000); // 5000 milisegundos = 5 segundos
+                        setInterval(obtenerUltimoUid, 5000); // 5000 milisegundos = 5 segundos
                     </script>
+
                     <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
@@ -915,9 +929,9 @@ battery_share
                     <script>
                         // Función para actualizar la hora en el elemento span
                         function actualizarHora() {
-                            const elementoHora = document.querySelector('#hora-span');  // Usamos el ID para seleccionar el elemento
+                            const elementoHora = document.querySelector('#hora-span'); // Usamos el ID para seleccionar el elemento
                             const horaActual = new Date();
-                            const formatoHora = horaActual.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                            const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             elementoHora.textContent = formatoHora;
                         }
 
@@ -1008,7 +1022,7 @@ battery_share
 													</span>
                                             <span class="menu-title">Jugadores</span>
                                         </a>
-                                        <a class="menu-link"
+                                         <a class="menu-link"
                                            href="../../demo55/dist/account/gentesearch.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -1199,7 +1213,7 @@ battery_share
                                 <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
                                     <!--begin::Title-->
                                     <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
-                                        Escenarios en RFIDPLAY</h1>
+                                        Juegos en Rfidplay</h1>
                                 </div>
                                 <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
                                     A-Z</h1>
@@ -1209,8 +1223,7 @@ battery_share
                                     <input type="text" id="mySearch" onkeyup="myFunction()" class="form-control"
                                            placeholder="Buscar Partidos...">
                                     <a href="#" class="btn btn-flex btn-primary h-40px fs-7 fw-bold"
-                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Añadir
-                                        Escenario</a>
+                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Crea un juego</a>
                                 </div>
                                 <!--end::Actions-->
                             </div>
@@ -1345,7 +1358,7 @@ FROM partidos
                                     <!--begin::Description-->
                                     <p class="text-gray-400 fs-4 fw-semibold py-7">Empieza buscando</p>
                                     <a href="#" class="btn btn-flex btn-primary h-40px fs-7 fw-bold"
-                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Anade
+                                       data-bs-toggle="modal" data-bs-target="#kt_modal_create_campaign">Añade
                                         Escenarios</a>
                                     <!--end::Description-->
                                     <!--begin::Action-->
@@ -3448,7 +3461,7 @@ FROM partidos
                                                     data-placeholder="Elige la Escuela 2">
                                                 <!-- Populate options dynamically with PHP -->
                                                 <?php
-                                                $result = mysqli_query($mysqli, $query); // Reuse the same query
+                                                $result = mysqli_query($mysqli, $query);
                                                 while ($row = mysqli_fetch_assoc($result)) {
                                                     echo '<option value="' . $row['id_escuela'] . '">' . $row['nombre_escuela'] . '</option>';
                                                 }
@@ -3465,11 +3478,8 @@ FROM partidos
 
                             <script>
                                 $(document).ready(function() {
-                                    // Function to update teams and school image based on selected school
                                     function updateSchoolInfo(schoolSelect, teamsSelect, imageDiv) {
                                         const selectedSchoolId = schoolSelect.val();
-
-                                        // AJAX request to get teams and school image
                                         $.ajax({
                                             type: "POST",
                                             url: "../../demo55/dist/utilities/modals/wizards/php/get_teams.php", // Modify the URL to the PHP script
@@ -3482,23 +3492,17 @@ FROM partidos
                                                 response.teams.forEach(function(team) {
                                                     teamsSelect.append('<option value="' + team.id + '">' + team.name + '</option>');
                                                 });
-
-                                                // Update school image
                                                 if (response.school_image) {
                                                     imageDiv.html('<img src="data:image/jpeg;base64,' + response.school_image + '" class="img-fluid" />');
                                                 } else {
-                                                    imageDiv.html(''); // Clear the image if not available
+                                                    imageDiv.html('');
                                                 }
                                             }
                                         });
                                     }
-
-                                    // Event handler for School 1 select
                                     $("#select-school-1").change(function() {
                                         updateSchoolInfo($(this), $("#select-teams-1"), $("#school1-image"));
                                     });
-
-                                    // Event handler for School 2 select
                                     $("#select-school-2").change(function() {
                                         updateSchoolInfo($(this), $("#select-teams-2"), $("#school2-image"));
                                     });
@@ -3530,7 +3534,7 @@ FROM partidos
                                             enableTime: true,
                                             dateFormat: "Y-m-d H:i",
                                             locale: {
-                                                firstDayOfWeek: 1, // Lunes como primer día de la semana
+                                                firstDayOfWeek: 1,
                                                 weekdays: {
                                                     shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
                                                     longhand: [

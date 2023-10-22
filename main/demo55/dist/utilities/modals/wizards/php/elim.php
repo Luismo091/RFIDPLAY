@@ -7,7 +7,7 @@ if (isset($_POST['idsensor'])) {
         // Muestra la SweetAlert y reinicia la página
         echo '<script>
             Swal.fire({
-                title: "Eliminado",
+                title: "Eliminado'.$idSensor.'",
                 text: "El sensor se ha eliminado correctamente.",
                 icon: "success",
                 showConfirmButton: false,

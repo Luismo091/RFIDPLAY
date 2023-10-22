@@ -1,4 +1,7 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
 session_start();
 if (empty($_SESSION['mail'])) {
     header("location:error-403.html");
@@ -844,6 +847,74 @@ if (empty($_SESSION['mail'])) {
                     </div>
                     <!--end::My apps links-->
                     <!--begin::Action-->
+                    <?php
+                    include('\laragon\www\RFIDPLAY\main\conexion.php');
+
+                    $idusu = $_SESSION['idusu'];
+
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu");
+
+                    if ($sql->num_rows != 0) {
+                        while ($row = $sql->fetch_object()) {
+                            ?>
+                            <div class="app-navbar-item ms-1 ms-md-3">
+                                <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span></span>
+                                <div id="ultimo-uid" style="display: none;"></div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="app-navbar-item ms-1 ms-md-3">
+                            <span class="badge badge-light-dark"></span>
+                        </div>
+                        <?php
+                    }
+                    ?>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
+
+                        function reproducirSonido() {
+                            var audio = new Audio('../../demo55/dist/account/recivedsound.mp3');
+                            audio.play();
+                        }
+
+                        function obtenerUltimoUid() {
+                            var jsonUrl = "../../demo55/dist/account/data.json?nocache=" + new Date().getTime();
+                            $.ajax({
+                                url: jsonUrl,
+                                dataType: "json",
+                                success: function (data) {
+                                    // Encontrar el último UID
+                                    var ultimoUid = data[data.length - 1];
+                                    var fechaActual = ultimoUid.date;
+
+                                    if (fechaActual !== fechaUltimoUid) {
+                                        // La fecha del último UID es diferente, mostrarlo
+                                        $("#ultimo-uid")
+                                            .text(ultimoUid.serial)
+                                            .fadeIn(1000)
+                                            .delay(2000) // Esperar 2 segundos
+                                            .fadeOut(1000); // Animación de salida
+                                        reproducirSonido();
+                                        fechaUltimoUid = fechaActual;
+                                        localStorage.setItem("fechaUltimoUid", fechaActual);
+                                    }
+                                },
+                                error: function () {
+                                    console.error("Error al cargar el JSON desde la URL.");
+                                }
+                            });
+                        }
+
+                        // Llamar a la función para obtener el último UID inicialmente
+                        obtenerUltimoUid();
+                        // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
+                        setInterval(obtenerUltimoUid, 5000); // 5000 milisegundos = 5 segundos
+                    </script>
+
                     <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
@@ -851,9 +922,9 @@ if (empty($_SESSION['mail'])) {
                     <script>
                         // Función para actualizar la hora en el elemento span
                         function actualizarHora() {
-                            const elementoHora = document.querySelector('#hora-span');  // Usamos el ID para seleccionar el elemento
+                            const elementoHora = document.querySelector('#hora-span'); // Usamos el ID para seleccionar el elemento
                             const horaActual = new Date();
-                            const formatoHora = horaActual.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                            const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             elementoHora.textContent = formatoHora;
                         }
 
@@ -909,19 +980,16 @@ if (empty($_SESSION['mail'])) {
                             <div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
                                 <!--begin:Menu link-->
                                 <span class="menu-link">
-											<span class="menu-icon">
-												<i class="ki-outline ki-category fs-2"></i>
+											<span class="menu-icon"><i class="ki-outline ki-category fs-2"></i>
 											</span>
 											<span class="menu-title">Herramientas de Administración</span>
 											<span class="menu-arrow"></span>
-										</span>
-                                <!--end:Menu link-->
-                                <!--begin:Menu sub-->
+                                </span>
                                 <div class="menu-sub menu-sub-accordion">
                                     <!--begin:Menu item-->
                                     <div class="menu-item">
                                         <!--begin:Menu link-->
-                                        <a class="menu-link active"
+                                        <a class="menu-link"
                                            href="../../demo55/dist/utilities/modals/wizards/create-account.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -929,12 +997,12 @@ if (empty($_SESSION['mail'])) {
                                             <span class="menu-title">Sensores</span>
                                         </a>
 
-                                        <a class="menu-link"
+                                        <a class="menu-link active"
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escuela.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
-                                            <span class="menu-title">Escuelas</span>
+                                            <span class="menu-title">Escuelas Detalle - Equipos</span>
                                         </a>
 
                                         <a class="menu-link"
@@ -945,21 +1013,21 @@ if (empty($_SESSION['mail'])) {
                                             <span class="menu-title">Jugadores</span>
                                         </a>
 
-                                        <a class="menu-link"
+                                         <a class="menu-link"
                                            href="../../demo55/dist/account/gentesearch.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Verificar RFID</span>
                                         </a>
-
                                         <a class="menu-link"
-                                           href="../../demo55/dist/utilities/modals/wizards/create-account.php">
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-games.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Partidos</span>
                                         </a>
+
                                         <a class="menu-link "
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escenario.php">
 													<span class="menu-bullet">

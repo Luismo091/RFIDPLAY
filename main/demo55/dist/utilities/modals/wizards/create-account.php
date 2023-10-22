@@ -1,4 +1,10 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
 session_start();
 if (empty($_SESSION['mail'])) {
     header("location:error-403.html");
@@ -7,6 +13,7 @@ if (empty($_SESSION['mail'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <!--begin::Head-->
 <head>
     <base href="../../../"/>
@@ -853,77 +860,82 @@ if (empty($_SESSION['mail'])) {
 
                     <?php
                     include('\laragon\www\RFIDPLAY\main\conexion.php');
-                    $idusu =$_SESSION['idusu'];
-                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu ");
+
+                    $idusu = $_SESSION['idusu'];
+
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu");
+
                     if ($sql->num_rows != 0) {
                         while ($row = $sql->fetch_object()) {
                             ?>
                             <div class="app-navbar-item ms-1 ms-md-3">
- <span class="badge badge-light-dark"> <?php echo $row->sensoruid; ?> <span class="material-symbols-outlined">
-battery_share
-</span>  <div id="ultimo-uid" style="display: none;"></span> </div>
+                                <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span> <div id="ultimo-uid" style="display: none;"></div></span>
+
                             </div>
-                        <?php }
-                    }else{ ?>
-                    <div class="app-navbar-item ms-1 ms-md-3">
-                        <span class="badge badge-light-dark"> ?</span>
-
-                        <?php } ?>
-
-                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                        <script>
-                            var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
-                            function obtenerUltimoUid() {
-                                // URL donde se encuentra el JSON
-                                var jsonUrl = "../../demo55/dist/account/data.json";
-                                $.ajax({
-                                    url: jsonUrl,
-                                    dataType: "json",
-                                    success: function(data) {
-                                        // Encontrar el último UID
-                                        var ultimoUid = data[data.length - 1];
-                                        var fechaActual = ultimoUid.date;
-
-                                        if (fechaActual !== fechaUltimoUid) {
-                                            // La fecha del último UID es diferente, mostrarlo
-                                            $("#ultimo-uid")
-                                                .text(ultimoUid.serial)  // Establecer el texto con el último UID
-                                                .fadeIn(1000)           // Animación de entrada
-                                                .delay(2000)            // Esperar 2 segundos
-                                                .fadeOut(1000);         // Animación de salida
-
-                                            // Actualizar la fecha del último UID mostrado
-                                            fechaUltimoUid = fechaActual;
-
-                                            // Almacenar la fecha en el almacenamiento local
-                                            localStorage.setItem("fechaUltimoUid", fechaActual);
-                                        }
-                                    },
-                                    error: function() {
-                                        console.error("Error al cargar el JSON desde la URL.");
-                                    }
-                                });
-                            }
-
-                            // Llamar a la función para obtener el último UID inicialmente
-                            obtenerUltimoUid();
-
-                            // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
-                            setInterval(obtenerUltimoUid, 1000); // 5000 milisegundos = 5 segundos
-                        </script>
-
-
-
+                            <?php
+                        }
+                    } else {
+                        ?>
                         <div class="app-navbar-item ms-1 ms-md-3">
+                            <span class="badge badge-light-dark"></span>
+                        </div>
+                        <?php
+                    }
+                    ?>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
+
+                        function reproducirSonido() {
+                            var audio = new Audio('../../demo55/dist/account/recivedsound.mp3');
+                            audio.play();
+                        }
+
+                        function obtenerUltimoUid() {
+                            var jsonUrl = "../../demo55/dist/account/data.json?nocache=" + new Date().getTime();
+                            $.ajax({
+                                url: jsonUrl,
+                                dataType: "json",
+                                success: function (data) {
+                                    // Encontrar el último UID
+                                    var ultimoUid = data[data.length - 1];
+                                    var fechaActual = ultimoUid.date;
+
+                                    if (fechaActual !== fechaUltimoUid) {
+                                        // La fecha del último UID es diferente, mostrarlo
+                                        $("#ultimo-uid")
+                                            .text(ultimoUid.serial)
+                                            .fadeIn(1000)
+                                            .delay(2000) // Esperar 2 segundos
+                                            .fadeOut(1000); // Animación de salida
+                                        reproducirSonido();
+                                        fechaUltimoUid = fechaActual;
+                                        localStorage.setItem("fechaUltimoUid", fechaActual);
+                                    }
+                                },
+                                error: function () {
+                                    console.error("Error al cargar el JSON desde la URL.");
+                                }
+                            });
+                        }
+
+                        // Llamar a la función para obtener el último UID inicialmente
+                        obtenerUltimoUid();
+                        // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
+                        setInterval(obtenerUltimoUid, 5000); // 5000 milisegundos = 5 segundos
+                    </script>
+
+                    <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
 
                     <script>
                         // Función para actualizar la hora en el elemento span
                         function actualizarHora() {
-                            const elementoHora = document.querySelector('#hora-span');  // Usamos el ID para seleccionar el elemento
+                            const elementoHora = document.querySelector('#hora-span'); // Usamos el ID para seleccionar el elemento
                             const horaActual = new Date();
-                            const formatoHora = horaActual.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                            const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             elementoHora.textContent = formatoHora;
                         }
 
@@ -946,7 +958,7 @@ battery_share
             <div id="kt_app_sidebar" class="app-sidebar flex-column mt-lg-4 ps-2 pe-2 ps-lg-7 pe-lg-4"
                  data-kt-drawer="true" data-kt-drawer-name="app-sidebar"
                  data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
-                 data-kt-drawer-width="250px" data-kt-drawer-direction="start"
+                  data-kt-drawer-width="250px" data-kt-drawer-direction="start"
                  data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
                 <div class="app-sidebar-logo flex-shrink-0 d-none d-md-flex flex-center align-items-center"
                      id="kt_app_sidebar_logo">
@@ -1015,7 +1027,7 @@ battery_share
                                             <span class="menu-title">Jugadores</span>
                                         </a>
 
-                                        <a class="menu-link"
+                                         <a class="menu-link"
                                            href="../../demo55/dist/account/gentesearch.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -1024,7 +1036,7 @@ battery_share
                                         </a>
 
                                         <a class="menu-link"
-                                           href="../../demo55/dist/utilities/modals/wizards/create-account.php">
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-games.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
@@ -1139,7 +1151,7 @@ battery_share
 													<span class="menu-icon" data-kt-element="icon">
 														<i class="ki-outline ki-moon fs-2"></i>
 													</span>
-                                            <span class="menu-title">Dark</span>
+                                            <span class="menu-title">Oscuro</span>
                                         </a>
                                     </div>
                                     <!--end::Menu item-->
@@ -1214,8 +1226,10 @@ battery_share
                                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                                     <a href="#" class="btn btn-primary er fs-6 px-8 py-4" data-bs-toggle="modal"
                                        data-bs-target="#kt_modal_create_account">Añadir Sensor RPLAY</a>
+                                    <a href="../dist/assets/dowloads/CH341SER.EXE" class="btn btn-dark" DOWNLOAD><i class="ki-duotone ki-folder-down fs-4 me-2 "><span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>Drivers</a>
                                 </div>
-                                <!--end::Actions-->
                             </div>
                             <!--end::Toolbar wrapper-->
                         </div>
@@ -1274,8 +1288,6 @@ battery_charging_90
 </span></span>
 
                                     </div>
-
-
                                     <a href="#"
                                        class="btn btn-icon btn-secondary position-absolute top-0 end-0 mt-2 me-2"
                                        data-bs-toggle="modal" data-bs-target="#kt_modal_2">
@@ -1285,21 +1297,17 @@ battery_charging_90
                                             <span class="path3"></span>
                                             <span class="path4"></span>
                                         </i>
-
                                     </a>
-
 
                                     <script>
                                         document.addEventListener('DOMContentLoaded', function () {
                                             const openModalButton = document.getElementById('openModalButton');
 
-                                            // Cuando se haga clic en el botón para abrir el modal
                                             openModalButton.addEventListener('click', function () {
-                                                // Abre el modal
+
                                                 const modal = new bootstrap.Modal(document.getElementById('kt_modal_2'));
                                                 modal.show();
 
-                                                // Conecta al puerto COM
                                                 connectToSerial();
                                             });
                                         });
@@ -1334,7 +1342,6 @@ battery_charging_90
                                                         url: "../../demo55/dist/utilities/modals/wizards/php/elim.php",
                                                         data: {idsensor: idSensor},
                                                         success: function (response) {
-                                                            // Mostrar la respuesta del servidor en el área designada
                                                             $("#ajax-result").html(response);
                                                         }
                                                     });
@@ -1483,6 +1490,7 @@ battery_charging_90
                                             description: "Realiza cambio del servidor post para añadir una nueva direccion"
                                         },
                                         {code: "wifidisconnect", description: "Desconecta la red actual de internet"},
+                                        {code: "reboot", description: "Reinicia el sensor R-AIR despúes"},
                                     ];
 
                                     textarea.addEventListener("input", function () {
@@ -1567,7 +1575,6 @@ battery_charging_90
                     // Actualizar el tiempo del último mensaje
                     lastMessageTime = currentTime;
                 }
-
                 // Declarar una variable para mantener el tiempo del último mensaje agrupado
                 let lastGroupedMessageTime = 0;
 
@@ -1594,12 +1601,8 @@ battery_charging_90
                     </div>
                 </div>
                 <div class="p-6 rounded bg-light-info text-dark fw-semibold mw-lg-500px text-start" data-kt-element="message-text">${message}</div>
-            </div>
-        `;
-
-                        // Agregar el nuevo mensaje al contenedor
+            </div>`;
                         messageContainer.appendChild(messageDiv);
-
                         // Actualizar el tiempo del último mensaje agrupado
                         lastGroupedMessageTime = currentTime;
                     } else {
@@ -1630,8 +1633,6 @@ battery_charging_90
                             if (done) {
                                 break;
                             }
-
-                            // Agregar el mensaje recibido del puerto COM al contenedor de mensajes
                             addReceivedMessage(value);
                         }
                     } catch (error) {
@@ -4783,7 +4784,7 @@ battery_charging_90
                                     <h2 class="fw-bold d-flex align-items-center text-dark">Elije el tipo de Sensor que
                                         se te instaló
                                         <span class="ms-1" data-bs-toggle="tooltip"
-                                              title="Billing is issued based on your selected account typ">
+                                              title="Coloca el id especificado en la parte inferior del dispositivo RFIDPLAY">
 												<i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
 											</span></h2>
                                     <!--end::Title-->
@@ -4802,7 +4803,7 @@ battery_charging_90
                                         <div class="col-lg-6">
                                             <!--begin::Option-->
                                             <input type="radio" class="btn-check" name="account_type" value="nodemcu"
-                                                   checked="checked" id="kt_create_account_form_account_type_personal"/>
+                                                   checked="checked" id="kt_create_account_form_account_type_personal" required/>
                                             <label class="btn btn-outline btn-outline-dashed btn-active-light-primary p-7 d-flex align-items-center mb-10"
                                                    for="kt_create_account_form_account_type_personal">
 
@@ -4860,8 +4861,7 @@ battery_charging_90
                                     <label class="form-label mb-3">Código Unico </label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <input type="text" class="form-control form-control-lg form-control-solid"
-                                           name="uniquecode" placeholder="" value=""/>
+                                    <input type="text" class="form-control form-control-lg form-control-solid" name="uniquecode" placeholder="R-FID-2019-594-3" value="" required/>
                                     <!--end::Input-->
                                 </div>
 
@@ -4921,7 +4921,7 @@ battery_charging_90
                                 <!--begin::Heading-->
                                 <div class="pb-8 pb-lg-10">
                                     <!--begin::Title-->
-                                    <h2 class="fw-bold text-dark">Estamos listos, tu sensor Rplay esta asignado</h2>
+                                    <h2 class="fw-bold text-dark">Verifica antes de guardar, Asegurate que el sensor este encendido</h2>
                                 </div>
                                 <!--end::Heading-->
                                 <!--begin::Body-->

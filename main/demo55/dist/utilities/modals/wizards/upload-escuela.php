@@ -1,4 +1,7 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
 session_start();
 if (empty($_SESSION['mail'])) {
     header("location:error-403.html");
@@ -851,34 +854,44 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     <!--begin::Action-->
                     <?php
                     include('\laragon\www\RFIDPLAY\main\conexion.php');
-                    $idusu =$_SESSION['idusu'];
-                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu ");
-                    if ($sql->num_rows != 0) {
-                    while ($row = $sql->fetch_object()) {
-                    ?>
-                    <div class="app-navbar-item ms-1 ms-md-3">
- <span class="badge badge-light-dark"> <?php echo $row->sensoruid; ?> <span class="material-symbols-outlined">
-battery_share
-</span>  <div id="ultimo-uid" style="display: none;"></span> </div>
-                </div>
-                <?php }
-                }else{ ?>
-                <div class="app-navbar-item ms-1 ms-md-3">
-                    <span class="badge badge-light-dark"> ?</span>
 
-                    <?php } ?>
+                    $idusu = $_SESSION['idusu'];
+
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu");
+
+                    if ($sql->num_rows != 0) {
+                        while ($row = $sql->fetch_object()) {
+                            ?>
+                            <div class="app-navbar-item ms-1 ms-md-3">
+                                <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span></span>
+                                <div id="ultimo-uid" style="display: none;"></div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="app-navbar-item ms-1 ms-md-3">
+                            <span class="badge badge-light-dark"></span>
+                        </div>
+                        <?php
+                    }
+                    ?>
 
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
                         var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
 
+                        function reproducirSonido() {
+                            var audio = new Audio('../../demo55/dist/account/recivedsound.mp3');
+                            audio.play();
+                        }
+
                         function obtenerUltimoUid() {
-                            // URL donde se encuentra el JSON
-                            var jsonUrl = "../../demo55/dist/account/data.json";
+                            var jsonUrl = "../../demo55/dist/account/data.json?nocache=" + new Date().getTime();
                             $.ajax({
                                 url: jsonUrl,
                                 dataType: "json",
-                                success: function(data) {
+                                success: function (data) {
                                     // Encontrar el último UID
                                     var ultimoUid = data[data.length - 1];
                                     var fechaActual = ultimoUid.date;
@@ -886,19 +899,16 @@ battery_share
                                     if (fechaActual !== fechaUltimoUid) {
                                         // La fecha del último UID es diferente, mostrarlo
                                         $("#ultimo-uid")
-                                            .text(ultimoUid.serial)  // Establecer el texto con el último UID
-                                            .fadeIn(1000)           // Animación de entrada
-                                            .delay(2000)            // Esperar 2 segundos
-                                            .fadeOut(1000);         // Animación de salida
-
-                                        // Actualizar la fecha del último UID mostrado
+                                            .text(ultimoUid.serial)
+                                            .fadeIn(1000)
+                                            .delay(2000) // Esperar 2 segundos
+                                            .fadeOut(1000); // Animación de salida
+                                        reproducirSonido();
                                         fechaUltimoUid = fechaActual;
-
-                                        // Almacenar la fecha en el almacenamiento local
                                         localStorage.setItem("fechaUltimoUid", fechaActual);
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     console.error("Error al cargar el JSON desde la URL.");
                                 }
                             });
@@ -906,10 +916,10 @@ battery_share
 
                         // Llamar a la función para obtener el último UID inicialmente
                         obtenerUltimoUid();
-
                         // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
-                        setInterval(obtenerUltimoUid, 1000); // 5000 milisegundos = 5 segundos
+                        setInterval(obtenerUltimoUid, 5000); // 5000 milisegundos = 5 segundos
                     </script>
+
                     <div class="app-navbar-item ms-1 ms-md-3">
                         <span class="menu-title" id="hora-span">3:15 PM</span>
                     </div>
@@ -917,7 +927,7 @@ battery_share
                     <script>
                         // Función para actualizar la hora en el elemento span
                         function actualizarHora() {
-                            const elementoHora = document.querySelector('#hora-span');  // Usamos el ID para seleccionar el elemento
+                            const elementoHora = document.querySelector('#hora-span'); // Usamos el ID para seleccionar el elemento
                             const horaActual = new Date();
                             const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             elementoHora.textContent = formatoHora;
@@ -994,7 +1004,6 @@ battery_share
 													</span>
                                             <span class="menu-title">Sensores</span>
                                         </a>
-
                                         <a class="menu-link active"
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escuela.php">
 													<span class="menu-bullet">
@@ -1010,7 +1019,7 @@ battery_share
 													</span>
                                             <span class="menu-title">Jugadores</span>
                                         </a>
-                                        <a class="menu-link"
+                                         <a class="menu-link"
                                            href="../../demo55/dist/account/gentesearch.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -1018,13 +1027,13 @@ battery_share
                                             <span class="menu-title">Verificar RFID</span>
                                         </a>
                                         <a class="menu-link"
-                                           href="../../demo55/dist/utilities/modals/wizards/create-account.php">
+                                           href="../../demo55/dist/utilities/modals/wizards/upload-games.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
                                             <span class="menu-title">Partidos</span>
                                         </a>
-                                        <a class="menu-link "
+                                        <a class="menu-link"
                                            href="../../demo55/dist/utilities/modals/wizards/upload-escenario.php">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
@@ -1033,10 +1042,7 @@ battery_share
                                         </a>
                                     </div>
                                 </div>
-
                             </div>
-
-
                         </div>
                         <!--end::Menu-->
                     </div>
@@ -1232,15 +1238,12 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                 if ($sql->num_rows != 0) {
                                     while ($row = $sql->fetch_object()) {
                                         ?>
-
                                         <div class="col-sm-6 col-xl-3 mb-xl-10">
                                             <div class="card h-lg-100">
                                                 <!--begin::Body-->
                                                 <div class="card-body d-flex justify-content-between align-items-start flex-column">
                                                     <!--begin::Icon-->
                                                     <a href="../../demo55/dist/pages/user-profile/followers.php?datosescue=<?php echo $row->ides; ?>">
-
-
                                                     <div class="m-0">
                                                         <div class="symbol symbol-50px me-5">
                                                             <img src="data:image/jpg;base64,<?php echo base64_encode($row->fotoes) ?>">
@@ -1272,9 +1275,6 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                             </div>
                                             <!--end::Card widget 2-->
                                         </div>
-
-
-
                                     <?php }
                                 }else{ ?>
 
