@@ -13,5 +13,5 @@ if ($mysqli->connect_error) {
 }
 $end_time = microtime(true);
 // Calcular la latencia
-$latency = round(($end_time - $start_time) * 1000, 2); // Convertir a milisegundos
+$latency = round(($end_time - $start_time) * 1000, 2); // Convertir a milisegundosS
 ?>
