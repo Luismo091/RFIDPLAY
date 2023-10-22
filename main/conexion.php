@@ -6,10 +6,12 @@ $database = "rfidplay";
 
 $start_time = microtime(true);
 
-$mysqli = new mysqli($hostname, $username, $password, $database);
+$mysqli = mysqli_init();
+mysqli_ssl_set($mysqli, NULL, NULL, "{}//DigiCertGlobalRootCA.crt.pem", NULL, NULL);
 
-if ($mysqli->connect_error) {
-    die("Error en la conexión: " . $mysqli->connect_error);
+// Realizar la conexión segura con SSL
+if (!mysqli_real_connect($mysqli, $hostname, $username, $password, $database, 3306, MYSQLI_CLIENT_SSL)) {
+    die("Error en la conexión: " . mysqli_connect_error());
 }
 $end_time = microtime(true);
 // Calcular la latencia
