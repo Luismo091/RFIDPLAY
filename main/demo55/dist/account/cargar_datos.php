@@ -83,7 +83,7 @@ if (file_exists($jsonFile)) {
                             <div class="d-flex flex-column">
                                 <!--begin::Name-->
                                 <div class="d-flex align-items-center mb-2">
-                                    <a class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"><?php echo $datos->Nombre1 ?><?php echo $datos->Nombre2 ?><?php echo $datos->Ape1 ?><?php echo $datos->Ape2 ?></a>
+                                    <a class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"><?php echo $datos->Nombre1 ?> <?php echo $datos->Nombre2 ?> <?php echo $datos->Ape1 ?> <?php echo $datos->Ape2 ?></a>
                                     <a>
                                         <i class="ki-outline ki-verify fs-1 text-primary"></i>
                                     </a>

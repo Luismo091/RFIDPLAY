@@ -1241,7 +1241,8 @@ if (empty($_SESSION['mail'])) {
                     <!--begin::Content-->
                     <?php
                     include('\laragon\www\RFIDPLAY\main\conexion.php');
-                    $sql = $mysqli->query("SELECT * FROM sensor INNER JOIN rfidplay.camposdejuego c on sensor.idcampoa = c.id_campo INNER JOIN rfidplay.usuarios u on sensor.iduserfk = u.idusuarios");
+                    $sql = $mysqli->query("SELECT * FROM SENSOR INNER JOIN rfidplay.camposdejuego c on sensor.idcampoa = c.id_campo INNER JOIN rfidplay.usuarios u on sensor.iduserfk = u.idusuarios
+inner join trusted_sensors t on sensor.sensoruid = t.trusted_sensorscol");
                     if ($sql->num_rows != 0) {
 
                         while ($row = $sql->fetch_object()) {
@@ -1283,7 +1284,7 @@ if (empty($_SESSION['mail'])) {
                                         </div>
                                     </div>
                                     <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                        <span class="badge badge-light-dark">CONECTADO 100% <span class="material-symbols-outlined">
+                                        <span class="badge badge-light-dark">A CABLE<span class="material-symbols-outlined">
 battery_charging_90
 </span></span>
 
@@ -1312,6 +1313,8 @@ battery_charging_90
                                             });
                                         });
                                     </script>
+
+
 
                                 </div>
                                 <script>
@@ -1350,8 +1353,102 @@ battery_charging_90
                                         });
                                     });
                                 </script>
-
                                 <!--end::Card-->
+                                <div id="kt_create_new_payment_method_2" class="fs-6 ps-10 collapse" style="">
+                                    <!--begin::Details-->
+                                    <div class="d-flex flex-wrap py-5">
+                                        <!--begin::Col-->
+                                        <div class="d-flex flex-wrap py-5">
+                                            <!--begin::Col-->
+                                            <div class="flex-equal me-5">
+                                                <table class="table table-flush fw-semibold gy-1">
+                                                    <tbody><tr>
+                                                        <td class="text-muted min-w-125px w-125px">Nombre</td>
+                                                        <td class="text-gray-800"><?php echo $row->trusted_sensorscol; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">MAC</td>
+                                                        <td class="text-gray-800"><?php echo $row->mac_address; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Wifi SSID</td>
+                                                        <td class="text-gray-800"><?php echo $row->wifi_ssid; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Wifi Clave</td>
+                                                        <td class="text-gray-800"><?php echo $row->wifi_key; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Numero Serial</td>
+                                                        <td class="text-gray-800"><?php echo $row->serial_number; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Caracteristicas</td>
+                                                        <td class="text-gray-800"><?php echo $row->additional_features; ?> Tamaño: <?php echo $row->size; ?></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                            </div>
+                                            <!--end::Col-->
+                                            <!--begin::Col-->
+                                            <div class="flex-equal">
+                                                <table class="table table-flush fw-semibold gy-1">
+                                                    <tbody><tr>
+                                                        <td class="text-muted min-w-125px w-125px">CPUs</td>
+                                                        <td class="text-gray-800"><?php echo $row->cpu; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Memorias</td>
+                                                        <td class="text-gray-800">Ram: <?php echo $row->ram_memory; ?> Flash: <?php echo $row->flash_memory; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Conectividad</td>
+                                                        <td class="text-gray-800">
+                                                            <?php echo $row->wireless_connectivity ?> Interfaces: <?php echo $row->communication_interfaces; ?>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Alimentación</td>
+                                                        <td class="text-gray-800">Voltage: <?php echo $row->operating_voltage; ?> Current: <?php echo $row->operating_current; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-muted min-w-125px w-125px">Herramientas Soportadas</td>
+                                                        <td class="text-gray-800"><?php echo $row->supported_os; ?> Desarrollo: <?php echo $row->development_platform; ?>
+                                                    </tr>
+
+                                                    <i class="ki-outline ki-check-circle fs-2 text-success"></i>RPLAY WEB OK</td>
+                                                    </tbody></table>
+                                            </div>
+                                            <!--end::Col-->
+                                        </div>
+                                        <!--end::Col-->
+                                    </div>
+                                    <!--end::Details-->
+                                </div>
+
+                                    <!--begin::Options-->
+                                    <div id="kt_create_new_payment_method">
+                                        <div class="py-1">
+                                            <!--begin::Header-->
+                                            <div class="py-3 d-flex flex-stack flex-wrap">
+                                                <!--begin::Toggle-->
+                                                <div class="d-flex align-items-center collapsible toggle collapsed" data-bs-toggle="collapse" data-bs-target="#kt_create_new_payment_method_2" aria-expanded="false">
+                                                    <!--begin::Arrow-->
+                                                    <div class="btn btn-sm btn-icon btn-active-color-primary ms-n3 me-2">
+                                                        <i class="ki-outline ki-minus-square toggle-on text-primary fs-2"></i>
+                                                        <i class="ki-outline ki-plus-square toggle-off fs-2"></i>
+                                                    </div>
+                                                    <!--end::Arrow-->
+                                                    <div class="me-3">
+                                                        <div class="d-flex align-items-center fw-bold">Más Detalles</div>
+                                                        <div class="text-muted"><?php echo $row->sensoruid;?></div>
+                                                    </div>
+                                                    <!--end::Summary-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Options-->
+                                </div>
                             </div>
 
 

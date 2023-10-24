@@ -923,7 +923,7 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                     </script>
 
                     <div class="app-navbar-item ms-1 ms-md-3">
-                        <span class="menu-title" id="hora-span">3:15 PM</span>
+                        <span class="menu-title" id="hora-span">3:15 PM fetching!</span>
                     </div>
 
                     <script>
@@ -1238,7 +1238,6 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                         <div id="kt_app_content_container" class="app-container container-fluid">
                             <!--begin::Card-->
                             <div class="row gy-5 g-xl-10">
-
                                 <?php
                                 include('\laragon\www\RFIDPLAY\main\conexion.php');
                                 $sql = $mysqli->query("SELECT
@@ -1262,11 +1261,24 @@ FROM partidos
                                         ?>
                                         <div class="col-sm-6 col-xl-6 mb-xl-10">
                                             <div class="card h-lg-100">
-
                                                 <div class="card-header pt-7">
                                                     <h3 class="card-title align-items-start flex-column">
-                                                        <span class="card-label fw-bold text-gray-800"><?php echo $row->hora; ?></span>
-                                                        <span class="text-gray-400 mt-1 fw-semibold fs-6"><?php echo $row->fecha; ?></span>
+                                                        <span class="text-gray-400 mt-1 fw-semibold fs-6" id="formattedDate"><?php
+                                                            setlocale(LC_TIME, 'es_ES'); // Establece la configuración de idioma y región en español
+
+                                                            $fecha_hora = $row->fecha; // Tu cadena de fecha y hora en formato string
+                                                            $timestamp = strtotime($fecha_hora); // Convierte la cadena a un valor de timestamp
+
+                                                            // Crea un objeto DateTime
+                                                            $dateTime = new DateTime();
+                                                            $dateTime->setTimestamp($timestamp);
+
+                                                            // Formatea la fecha y hora
+                                                            $fecha_formateada = $dateTime->format('l d \d\e F \d\e Y \a \l\a\s h:i A');
+
+                                                            // Imprime la fecha formateada
+                                                            echo $fecha_formateada;
+                                                            ?></span>
                                                     </h3>
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <div class="card-title align-items-lg-center flex-column"
@@ -1313,12 +1325,7 @@ FROM partidos
                                                 </div>
                                                 <!--begin::Body-->
                                                 <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                                    <!--begin::Icon-->
-
-                                                    <!--end::Icon-->
-                                                    <!--begin::Section-->
                                                     <div class="d-flex flex-column my-7">
-
                                                         <!--begin::Number-->
                                                         <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_escuela_local; ?> Vs <?php echo $row->nombre_escuela_visitante; ?> </span>
                                                         <!--end::Number-->
@@ -1327,19 +1334,19 @@ FROM partidos
                                                             <span class="fw-semibold fs-6 text-gray-400">Equipos participantes: <?php echo $row->nombre_equipo_local; ?> Vs <?php echo $row->nombre_equipo_visitante; ?></span>
                                                         </div>
                                                         <!--end::Follower-->
-
-                                                    </div>
-
-                                                    <div>
-                                                        <!-- Botón de Editar -->
-                                                        <a href="#" class="btn btn-icon btn-secondary"><i
-                                                                    class="bi bi-pencil fs-4 me-1"></i></a>
-                                                        <!-- Botón de Eliminar -->
-                                                        <a href="#" class="btn btn-danger hover-scale eliminarEnlace"
-                                                           data-idsensor="<?php echo $row->id_campo; ?>">Eliminar</a>
                                                     </div>
                                                 </div>
 
+
+                                                <?php if ($row->estado == 0) { ?>
+                                                    <button class="startProcessButton btn btn-primary btn-lg w-100" data-partido-id="<?php echo $row->id_partido; ?>">
+                                                        <i class="fa-solid fa-play fa-beat-fade"></i>Iniciar Juego
+                                                    </button>
+                                                <?php } if($row->estado == 1) {?>
+                                                    <button class="startProcessButton1 btn btn-light-primary btn-lg w-100" data-partido-id="<?php echo $row->id_partido; ?>">
+                                                        <i class="fa-solid fa-play fa-beat-fade"></i>Llenar Planilla
+                                                    </button>
+                                                <?php } ?>
                                                 <!--end::Body-->
                                             </div>
                                             <!--end::Card widget 2-->
@@ -1378,6 +1385,8 @@ FROM partidos
                         </div>
                         <!--end::Content container-->
                     </div>
+
+
 
 
                     <script>
@@ -3348,6 +3357,283 @@ FROM partidos
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!--end::Modal - View Users-->
+<!-- Agrega esto a tu archivo HTML para definir el modal -->
+
+<div class="modal fade" id="miModal" tabindex="-1"  aria-labelledby="miModalLabel" aria-hidden="false">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-fullscreen p-9">
+        <!--begin::Modal content-->
+        <div class="modal-content modal-rounded">
+            <!--begin::Modal header-->
+            <div class="modal-header py-7 d-flex justify-content-between">
+                <h2>Asistencia de partido #  <span id="partidoIdModal"></span></h2>
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-outline ki-cross fs-1"></i>
+                </div>
+            </div>
+            <div class="modal-body scroll-y m-5">
+                <!--begin::Stepper-->
+                <div class="stepper stepper-links d-flex flex-column" id="form_kt_asistencia_stepper">
+                    <!--begin::Nav-->
+                    <div class="stepper-nav justify-content-center py-2">
+                        <!--begin::Step 1-->
+                        <div class="stepper-item me-5 me-md-15 current" data-kt-stepper-element="nav">
+                            <h3 class="stepper-title">Esperando Jugadores...</h3>
+                        </div>
+                        <!--end::Step 2-->
+                        <div class="stepper-item" data-kt-stepper-element="nav">
+                            <h3 class="stepper-title">Guardar</h3>
+                        </div>
+                        <!--end::Step 5-->
+                    </div>
+                    <!--end::Nav-->
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <!--begin::Form-->
+                    <form class="mx-auto w-100 mw-600px pt-15 pb-10" novalidate="novalidate" id="form_kt_asistencia_stepper_form " enctype="multipart/form-data">
+                        <!--begin::Step 1-->
+                        <div class="current" data-kt-stepper-element="content">
+                            <!--begin::Wrapper-->
+                            <div class="w-100">
+                                <!--begin::Input group-->
+                                <div class="mb-10 fv-row">
+                                    <div class="row">
+                                        <div class="pb-10 pb-lg-15">
+                                            <!--begin::Title-->
+                                            <style>
+                                                .ellipsis-animation {
+                                                    display: inline-block;
+                                                    overflow: hidden;
+                                                    vertical-align: bottom;
+                                                    animation: ellipsis 400ms infinite;
+                                                }
+                                                .ellipsis-animation2 {
+                                                    display: inline-block;
+                                                    overflow: hidden;
+                                                    vertical-align: bottom;
+                                                    animation: ellipsis 500ms infinite;
+                                                }
+                                                .ellipsis-animation3 {
+                                                    display: inline-block;
+                                                    overflow: hidden;
+                                                    vertical-align: bottom;
+                                                    animation: ellipsis 600ms infinite;
+                                                }
+
+                                                @keyframes ellipsis {
+                                                    0%, 100% {
+                                                        opacity: 0;
+                                                    }
+                                                    50% {
+                                                        opacity: 1;
+                                                    }
+                                                }
+                                            </style>
+                                            <h2 class="fw-bold d-flex align-items-center text-dark">
+                                                Escanea a los jugadores<span class="ellipsis-animation">.</span><span class="ellipsis-animation2">.</span>
+                                                <span class="ellipsis-animation3">.</span>                                            </h2>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <!-- School 1 Fields -->
+                                            <span class="badge badge-square badge-light" id="ids1">5</span>
+                                            <div class="text-center mb-4">
+                                                <h3 class="card-title" id="nameesc11"></h3>
+                                                <p id="nombreEquipo11"></p>
+                                            </div>
+                                            <div class="card-body d-flex flex-column p-9 pt-3 mb-9">
+                                                <!--Jugadores Escaneados del equipo 1-->
+                                                <div id="juagdores1"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <!-- School 2 Fields -->
+                                            <span class="badge badge-square badge-light" id="ids2">5</span>
+                                            <div class="text-center mb-4">
+                                                <h3 class="card-title" id="nameesc22"></h3>
+                                                <p id="nombreEquipo22"></p>
+                                            </div>
+                                            <div class="card-body d-flex flex-column p-9 pt-3 mb-9">
+                                                <!--Jugadores Escaneados del equipo 2-->
+                                                <div id="juagdores2"></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-kt-stepper-element="content">
+                            <!--begin::Wrapper-->
+                            <div class="w-100">
+                                <!--begin::Heading-->
+                                <div class="pb-12 text-center">
+                                    <!--begin::Title-->
+                                    <h1 class="fw-bold text-dark">Datos recibidos esto es lo que tenemos</h1>
+                                    <!--end::Title-->
+                                    <!--begin::Description-->
+                                    <div class="fw-semibold text-muted fs-4">You will receive an email with with the summary of your newly created campaign!</div>
+                                    <!--end::Description-->
+                                </div>
+
+                                <div class="text-center px-4">
+                                    <img src="assets/media/illustrations/sketchy-1/9.png" alt="" class="mww-100 mh-350px" />
+                                </div>
+                                <!--end::Illustration-->
+                            </div>
+                        </div>
+                        <!--end::Step 5-->
+                        <!--begin::Actions-->
+                        <div class="d-flex flex-stack pt-10">
+                            <!--begin::Wrapper-->
+                            <div class="me-2">
+                                <button type="button" class="btn btn-lg btn-light-primary me-3" data-kt-stepper-action="previous">
+                                    <i class="ki-outline ki-arrow-left fs-3 me-1"></i>Atrás</button>
+                            </div>
+                            <!--end::Wrapper-->
+                            <!--begin::Wrapper-->
+                            <div>
+                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit" id="submitFormButton">
+											<span class="indicator-label">Subir
+											<i class="ki-outline ki-arrow-right fs-3 ms-2 me-0"></i></span>
+                                    <span class="indicator-progress">Por favor espere...
+											<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                </button>
+                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">Continuar
+                                    <i class="ki-outline ki-arrow-right fs-3 ms-1 me-0"></i></button>
+                            </div>
+                            <!--end::Wrapper-->
+                        </div>
+                        <!--end::Actions-->
+                    </form>
+
+
+                </div>
+                <!--end::Stepper-->
+            </div>
+            <!--begin::Modal body-->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const startProcessButtons = document.querySelectorAll('.startProcessButton');
+
+        startProcessButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const partidoId = button.getAttribute('data-partido-id');
+                document.getElementById('partidoIdModal').textContent = partidoId;
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../demo55/dist/utilities/modals/wizards/php/obtener_info_equipo.php",
+                    data: { partidoId: partidoId },
+                    dataType: "json",
+                    success: function (response) {
+                        // Verifica si hay valores en la respuesta antes de mostrarlos
+                        if (response.equipo1 && response.equipo2) {
+                            // ID DE LAS ESCUELAS 1 (id_equipo_local)  Y 2 (id_equipo_visitante)
+                            document.getElementById('ids1').textContent = response.equipo1.idsesc;
+                            document.getElementById('ids2').textContent = response.equipo2.idsesc;
+
+                            document.getElementById('nombreEquipo11').textContent = response.equipo1.nombre;
+                            document.getElementById('nombreEquipo22').textContent = response.equipo2.nombre;
+                            document.getElementById('nameesc11').textContent = response.equipo1.escuela;
+                            document.getElementById('nameesc22').textContent = response.equipo2.escuela;
+                        }
+                    },
+                    error: function (error) {
+                        // Maneja errores si es necesario
+                        console.error("Error en la solicitud AJAX: ", error);
+                    }
+                });
+
+                Swal.fire({
+                    html: '¿Estás seguro de que deseas iniciar el partido con el ID: ' + partidoId + '?',
+                    icon: "question",
+                    buttonsStyling: false,
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, iniciar el partido",
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: 'btn btn-danger'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#miModal').modal('show');
+                        $.ajax({
+                            type: "POST",
+                            url: "../../demo55/dist/utilities/modals/wizards/php/update_value_partido.php",
+                            data: { partidoId: partidoId },
+                            dataType: "json",
+                            success: function (response) {
+                            },
+                            error: function (error) {
+                                // Maneja errores si es necesario
+                                console.error("Error en la solicitud AJAX: ", error);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const startProcessButtons = document.querySelectorAll('.startProcessButton1');
+
+        startProcessButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const partidoId = button.getAttribute('data-partido-id');
+                document.getElementById('partidoIdModal').textContent = partidoId;
+
+                $.ajax({
+                    type: "POST",
+                    url: "../../demo55/dist/utilities/modals/wizards/php/obtener_info_equipo.php",
+                    data: { partidoId: partidoId },
+                    dataType: "json",
+                    success: function (response) {
+                        // Verifica si hay valores en la respuesta antes de mostrarlos
+                        if (response.equipo1 && response.equipo2) {
+                            // ID DE LAS ESCUELAS 1 (id_equipo_local)  Y 2 (id_equipo_visitante)
+                            document.getElementById('ids1').textContent = response.equipo1.idsesc;
+                            document.getElementById('ids2').textContent = response.equipo2.idsesc;
+
+                            document.getElementById('nombreEquipo11').textContent = response.equipo1.nombre;
+                            document.getElementById('nombreEquipo22').textContent = response.equipo2.nombre;
+                            document.getElementById('nameesc11').textContent = response.equipo1.escuela;
+                            document.getElementById('nameesc22').textContent = response.equipo2.escuela;
+                        }
+                    },
+                    error: function (error) {
+                        // Maneja errores si es necesario
+                        console.error("Error en la solicitud AJAX: ", error);
+                    }
+                });
+
+                Swal.fire({
+                    html: '¿Continuar con la planilla?: ' + partidoId + '?',
+                    icon: "question",
+                    buttonsStyling: false,
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, Continuar",
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: 'btn btn-danger'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#miModal').modal('show');
+
+                    }
+                });
+            });
+        });
+    });
+</script>
 <!--begin::Modal - Create Campaign-->
 <div class="modal fade" id="kt_modal_create_campaign" tabindex="-1" aria-hidden="true">
     <!--begin::Modal dialog-->
@@ -3374,7 +3660,7 @@ FROM partidos
                     <div class="stepper-nav justify-content-center py-2">
                         <!--begin::Step 1-->
                         <div class="stepper-item me-5 me-md-15 current" data-kt-stepper-element="nav">
-                            <h3 class="stepper-title">Equipos Particpantes</h3>
+                            <h3 class="stepper-title">Equipos Partipantes</h3>
                         </div>
                         <!--end::Step 1-->
                         <!--begin::Step 2-->
@@ -3414,22 +3700,14 @@ FROM partidos
                                             <!--end::Notice-->
                                         </div>
                                         <div class="col-md-6">
+                                            <!-- School 1 Fields -->
                                             <label class="required fw-semibold fs-6 mb-5">Selecciona el equipo 1</label>
                                             <div class="text-center mb-4">
-                                                <style>.image-input-placeholder {
-                                                        background-image: url('assets/media/svg/files/blank-image.svg');
-                                                    }
-                                                    [data-bs-theme="dark"] .image-input-placeholder {
-                                                        background-image: url('assets/media/svg/files/blank-image-dark.svg');
-                                                    }</style>
-                                                <div id="school1-image"
-                                                     class="image-input image-input-empty image-input-outline image-input-placeholder mx-auto"
-                                                     data-kt-image-input="true">
+                                                <div id="school1-image" class="image-input image-input-empty image-input-outline image-input-placeholder mx-auto" data-kt-image-input="true">
                                                     <div class="image-input-wrapper w-125px h-125px"></div>
                                                 </div>
                                             </div>
-                                            <select id="select-school-1" class="form-select mb-3" data-control="select2"
-                                                    data-placeholder="Elige la Escuela 1">
+                                            <select id="select-school-1" name="select-school-1" class="form-select mb-3" data-control="select2" data-placeholder="Elige la Escuela 1">
                                                 <!-- Populate options dynamically with PHP -->
                                                 <?php
                                                 $query = "SELECT id_escuela, nombre_escuela FROM escuelasdefutbol";
@@ -3440,26 +3718,20 @@ FROM partidos
                                                 }
                                                 ?>
                                             </select>
-                                            <select id="select-teams-1" name="select-teams-1" class="form-select mb-3" data-control="select2"
-                                                    data-placeholder="Equipos de la Escuela 1">
+                                            <select id="select-teams-1" name="select-teams-1" class="form-select mb-3" data-control="select2" data-placeholder="Equipos de la Escuela 1">
                                                 <option></option>
                                             </select>
                                         </div>
 
-                                        <!-- School 2 Fields -->
                                         <div class="col-md-6">
+                                            <!-- School 2 Fields -->
                                             <label class="required fw-semibold fs-6 mb-5">Selecciona el equipo 2</label>
                                             <div class="text-center mb-4">
-                                                <!-- Centered Image Placeholder for School 2 -->
-                                                <div id="school2-image"
-                                                     class="image-input image-input-empty image-input-outline image-input-placeholder mx-auto"
-                                                     data-kt-image-input="true">
+                                                <div id="school2-image" class="image-input image-input-empty image-input-outline image-input-placeholder mx-auto" data-kt-image-input="true">
                                                     <div class="image-input-wrapper w-125px h-125px"></div>
                                                 </div>
                                             </div>
-                                            <select id="select-school-2"  class="form-select mb-3" data-control="select2"
-                                                    data-placeholder="Elige la Escuela 2">
-                                                <!-- Populate options dynamically with PHP -->
+                                            <select id="select-school-2" name="select-school-2" class="form-select mb-3" data-control="select2" data-placeholder="Elige la Escuela 2">
                                                 <?php
                                                 $result = mysqli_query($mysqli, $query);
                                                 while ($row = mysqli_fetch_assoc($result)) {
@@ -3467,8 +3739,7 @@ FROM partidos
                                                 }
                                                 ?>
                                             </select>
-                                            <select id="select-teams-2" name="select-teams-2" class="form-select mb-3" data-control="select2"
-                                                    data-placeholder="Equipos de la Escuela 2">
+                                            <select id="select-teams-2" name="select-teams-2" class="form-select mb-3" data-control="select2" data-placeholder="Equipos de la Escuela 2">
                                                 <option></option>
                                             </select>
                                         </div>
@@ -3476,38 +3747,7 @@ FROM partidos
                                 </div>
                             </div>
 
-                            <script>
-                                $(document).ready(function() {
-                                    function updateSchoolInfo(schoolSelect, teamsSelect, imageDiv) {
-                                        const selectedSchoolId = schoolSelect.val();
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "../../demo55/dist/utilities/modals/wizards/php/get_teams.php", // Modify the URL to the PHP script
-                                            data: { school_id: selectedSchoolId },
-                                            dataType: "json",
-                                            success: function(response) {
-                                                // Update teams select options
-                                                teamsSelect.empty();
-                                                teamsSelect.append('<option></option>');
-                                                response.teams.forEach(function(team) {
-                                                    teamsSelect.append('<option value="' + team.id + '">' + team.name + '</option>');
-                                                });
-                                                if (response.school_image) {
-                                                    imageDiv.html('<img src="data:image/jpeg;base64,' + response.school_image + '" class="img-fluid" />');
-                                                } else {
-                                                    imageDiv.html('');
-                                                }
-                                            }
-                                        });
-                                    }
-                                    $("#select-school-1").change(function() {
-                                        updateSchoolInfo($(this), $("#select-teams-1"), $("#school1-image"));
-                                    });
-                                    $("#select-school-2").change(function() {
-                                        updateSchoolInfo($(this), $("#select-teams-2"), $("#school2-image"));
-                                    });
-                                });
-                            </script>
+
                             <!--end::Wrapper-->
                         </div>
                         <!--end::Step 1-->
@@ -3523,10 +3763,11 @@ FROM partidos
                                 <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
                                 <script src="assets/plugins/global/plugins.bundle.js"></script>
                                 <div class="d-flex fv-row mb-12">
+                                    <!-- Fecha y Hora del Partido -->
                                     <div class="mb-12">
-                                        <label for="" class="form-label">Selecciona una Fecha y Hora para el partido</label>
+                                        <label class="form-label">Selecciona una Fecha y Hora para el partido</label>
                                         <div class="d-flex">
-                                            <input class="form-control form-control-solid" placeholder="Selecciona una Fecha y Hora" id="kt_datepicker_3" />
+                                            <input class="form-control form-control-solid" placeholder="Selecciona una Fecha y Hora" id="kt_datepicker_3" name="kt_datepicker_3" />
                                         </div>
                                     </div>
                                     <script>
@@ -3583,12 +3824,10 @@ FROM partidos
                                 </div>
 
                                 <div class="fv-row mb-10">
-                                    <!--begin::Label-->
+                                    <!-- Campo enlazado -->
                                     <label class="form-label required">Campo enlazado</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
                                     <div class="d-flex">
-                                        <select name="campoe" class="form-select form-select-lg form-select-solid" data-control="select2" data-placeholder="Seleccione..." data-allow-clear="true" data-hide-search="true">
+                                        <select name="campoe" id="campoe" class="form-select form-select-lg form-select-solid" data-control="select2" data-placeholder="Seleccione..." data-allow-clear="true" data-hide-search="true">
                                             <?php
                                             $query = "SELECT * FROM camposdejuego";
                                             $result = mysqli_query($mysqli, $query);
@@ -3596,18 +3835,15 @@ FROM partidos
                                             while ($row = mysqli_fetch_assoc($result)) {
                                                 echo '<option value="' . $row['id_campo'] . '">' . $row['nombre_campo'] . '</option>';
                                             }
-
                                             ?>
                                         </select>
                                     </div>
-                                    <!--end::Input-->
                                 </div>
                             </div>
                             <!--end::Wrapper-->
                         </div>
                         <!--end::Step 2-->
                         <!--begin::Step 3-->
-
                         <div data-kt-stepper-element="content">
                             <!--begin::Wrapper-->
                             <div class="w-100">
@@ -3624,9 +3860,9 @@ FROM partidos
                                 <!--begin::Actions-->
                                 <span id="nombreImagen"></span>
 
-                                <div id="datosMostrados">
-                                    <!-- Aquí se mostrarán los datos antes de enviarlos -->
-                                </div>
+                                <div id="datosMostrados"></div>
+                                <div id="responseContainer"></div>
+
                                 <!--end::Actions-->
                                 <!--begin::Illustration-->
                                 <div class="text-center px-4">
@@ -3646,7 +3882,7 @@ FROM partidos
                             <!--end::Wrapper-->
                             <!--begin::Wrapper-->
                             <div>
-                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit" id="submitFormButton">
+                                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit" id="submitFormButton3">
 											<span class="indicator-label">Subir
 											<i class="ki-outline ki-arrow-right fs-3 ms-2 me-0"></i></span>
                                     <span class="indicator-progress">Por favor espere...
@@ -3659,110 +3895,78 @@ FROM partidos
                         </div>
                         <!--end::Actions-->
                     </form>
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
                     <script>
                         $(document).ready(function() {
-                            // Manejar el evento de clic en el botón de envío del formulario
-                            $("#submitFormButton").click(function(event) {
-                                event.preventDefault(); // Prevenir el envío del formulario por defecto
+                            // Función para actualizar la información de la escuela y los equipos
+                            function updateSchoolInfo(schoolSelect, teamsSelect, imageDiv) {
+                                const selectedSchoolId = schoolSelect.val();
 
-                                // Obtener los valores de los campos del formulario
-                                var selectedSchool1 = $("#select-school-1").val();
-                                var selectedSchool2 = $("#select-school-2").val();
-                                var selectedDate = $("#kt_datepicker_3").val();
-                                var selectedCampo = $("select[name='campoe']").val();
-
-                                // Obtener los equipos seleccionados
-                                var selectedTeams1 = $("#select-teams-1").val() || []; // Si no hay selecciones, establecerlo como un array vacío
-                                var selectedTeams2 = $("#select-teams-2").val() || []; // Si no hay selecciones, establecerlo como un array vacío
-
-                                // Construir el texto que se mostrará en el div antes de enviar la solicitud AJAX
-                                dataToShow = `
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <strong>Equipo 1 Seleccionado:</strong><br>
-                        ${selectedSchool1}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Equipo 2 Seleccionado:</strong><br>
-                        ${selectedSchool2}
-                    </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <strong>Fecha y Hora Seleccionadas:</strong><br>
-                        ${selectedDate}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Campo enlazado:</strong><br>
-                        ${selectedCampo}
-                    </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <strong>Equipos Seleccionados para Equipo 1:</strong><br>
-                        ${selectedTeams1.join(', ')}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Equipos Seleccionados para Equipo 2:</strong><br>
-                        ${selectedTeams2.join(', ')}
-                    </div>
-                </div>`;
-
-                                $("#datosMostrados").html(dataToShow);
-
-                                // Crear un objeto FormData para enviar los datos
-                                var formData = new FormData();
-                                formData.append("selectedSchool1", selectedSchool1);
-                                formData.append("selectedSchool2", selectedSchool2);
-                                formData.append("selectedDate", selectedDate);
-                                formData.append("selectedCampo", selectedCampo);
-                                formData.append("selectedTeams1", selectedTeams1.join(','));
-                                formData.append("selectedTeams2", selectedTeams2.join(','));
-
-
-                                // Enviar la solicitud AJAX
                                 $.ajax({
-                                    url: "../../demo55/dist/utilities/modals/wizards/php/insert_data_game.php", // Reemplaza "ruta_al_php.php" con la ruta correcta a tu archivo PHP que procesa los datos
                                     type: "POST",
-                                    data: formData,
-                                    processData: false,
-                                    contentType: false,
+                                    url: "../../demo55/dist/utilities/modals/wizards/php/get_teams.php",
+                                    data: { school_id: selectedSchoolId },
+                                    dataType: "json",
                                     success: function(response) {
-                                        console.log(response);
-
-                                        Swal.fire({
-                                            text: 'Datos guardados',
-                                            icon: 'success',
-                                            buttonsStyling: false,
-                                            confirmButtonText: 'Entendido',
-                                            customClass: {
-                                                confirmButton: 'btn btn-primary'
-                                            }
-                                        }).then(function() {
-                                            // Cierra el modal al hacer clic en 'Entendido'
-                                            $('#kt_modal_create_campaign').modal('hide');
-
-                                            // Reinicia el contenido del modal cuando se cierra
-                                            $('#kt_modal_create_campaign').on('hidden.bs.modal', function () {
-                                                location.reload(); // Recarga la página para reiniciar el modal
-                                            });
+                                        // Actualiza las opciones de selección de equipos
+                                        teamsSelect.empty();
+                                        teamsSelect.append('<option></option>');
+                                        response.teams.forEach(function(team) {
+                                            teamsSelect.append('<option value="' + team.id + '">' + team.name + '</option>');
                                         });
+                                        if (response.school_image) {
+                                            imageDiv.html('<img src="data:image/jpeg;base64,' + response.school_image + '" class="img-fluid" />');
+                                        } else {
+                                            imageDiv.html('');
+                                        }
+                                    }
+                                });
+                            }
+
+                            // Asigna el evento de cambio a las selecciones de escuela
+                            $("#select-school-1").change(function() {
+                                updateSchoolInfo($(this), $("#select-teams-1"), $("#school1-image"));
+                            });
+                            $("#select-school-2").change(function() {
+                                updateSchoolInfo($(this), $("#select-teams-2"), $("#school2-image"));
+                            });
+
+                            // Agregar evento click al botón "Subir"
+                            $("#submitFormButton3").click(function() {
+                                // Serializa el formulario para obtener los datos
+
+                                // Obtener los datos del formulario
+                                var datos = {
+                                    "select-school-1": $("#select-school-1").val(),
+                                    "select-teams-1": $("#select-teams-1").val(),
+                                    "select-school-2": $("#select-school-2").val(),
+                                    "select-teams-2": $("#select-teams-2").val(),
+                                    "campoe": $("#campoe").val(),
+                                    "kt_datepicker_3": $("#kt_datepicker_3").val(),
+                                };
+
+                                // Realizar una solicitud AJAX para enviar los datos al servidor
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../../demo55/dist/utilities/modals/wizards/php/insert_data_game.php",
+                                    data: datos,
+                                    success: function(response) {
+                                        // Muestra la respuesta del servidor en un elemento HTML
+                                        $("#responseContainer").html(response);
                                     },
                                     error: function(xhr, status, error) {
-                                        // Manejar errores
-                                        console.error(error);
+                                        // Manejar errores en la solicitud AJAX
+                                        console.error("Error al enviar los datos: " + error);
                                     }
                                 });
                             });
                         });
                     </script>
 
-
                 </div>
                 <!--end::Stepper-->
             </div>
-            <!--begin::Modal body-->
+            <!--begin::Modal body-->../../demo55/dist/utilities/modals/wizards/php/insert_data_game.php
         </div>
     </div>
 </div>

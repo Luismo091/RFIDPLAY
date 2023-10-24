@@ -879,8 +879,8 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
                             while ($row = $sql->fetch_object()) {
                                 ?>
                                 <div class="app-navbar-item ms-1 ms-md-3">
-                                    <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span></span>
-                                    <div id="ultimo-uid" style="display: none;"></div>
+                                    <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span> <div id="ultimo-uid" style="display: none;"></div></span>
+
                                 </div>
                                 <?php
                             }

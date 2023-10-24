@@ -13,7 +13,7 @@ char serverUrl[100] = "";
 
 // Configuración de pines para el lector RFID
 #define SS_PIN D2
-#define RST_PIN D1
+#define RST_PIN D1S
 
 // Pines para los LEDs
 #define RED_LED D5
