@@ -1,7 +1,7 @@
 <?php
-$hostname = "rfidplya-datacenter.mysql.database.azure.com";
-$username = "rfidMaster";
-$password = "\$SecureMySQL2023@";
+$hostname = "localhost";
+$username = "root";
+$password = "";
 $database = "rfidplay";
 
 $start_time = microtime(true);
