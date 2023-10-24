@@ -1369,7 +1369,6 @@ FROM partidos
                                         Escenarios</a>
                                     <!--end::Description-->
                                     <!--begin::Action-->
-
                                     <!--end::Action-->
                                 </div>
                                 <!--end::Heading-->
@@ -1475,7 +1474,6 @@ FROM partidos
                             <li class="menu-item">
                                 <a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
                             </li>
-
                         </ul>
                         <!--end::Menu-->
                     </div>
@@ -3442,6 +3440,26 @@ FROM partidos
                                             <div class="card-body d-flex flex-column p-9 pt-3 mb-9">
                                                 <!--Jugadores Escaneados del equipo 1-->
                                                 <div id="juagdores1"></div>
+                                                <div class="d-flex align-items-center mb-5">
+                                                    <!--begin::Avatar-->
+                                                    <div class="me-5 position-relative">
+                                                        <!--begin::Image-->
+                                                        <div class="symbol symbol-35px symbol-circle">
+                                                            <img alt="Pic" src="assets/media/avatars/300-6.jpg">
+                                                        </div>
+                                                        <!--end::Image-->
+                                                    </div>
+                                                    <!--end::Avatar-->
+                                                    <!--begin::Details-->
+                                                    <div class="fw-semibold">
+                                                        <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary">Jugadores Escaneados</a>
+                                                        <div class="text-gray-400">Mas Info</div>
+                                                    </div>
+                                                    <!--end::Details-->
+                                                    <!--begin::Badge-->
+                                                    <div class="badge badge-light ms-auto">5</div>
+                                                    <!--end::Badge-->
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -3450,10 +3468,32 @@ FROM partidos
                                             <div class="text-center mb-4">
                                                 <h3 class="card-title" id="nameesc22"></h3>
                                                 <p id="nombreEquipo22"></p>
+
                                             </div>
                                             <div class="card-body d-flex flex-column p-9 pt-3 mb-9">
                                                 <!--Jugadores Escaneados del equipo 2-->
                                                 <div id="juagdores2"></div>
+
+                                                <div class="d-flex align-items-center mb-5">
+                                                    <!--begin::Avatar-->
+                                                    <div class="me-5 position-relative">
+                                                        <!--begin::Image-->
+                                                        <div class="symbol symbol-35px symbol-circle">
+                                                            <img alt="Pic" src="assets/media/avatars/300-6.jpg">
+                                                        </div>
+                                                        <!--end::Image-->
+                                                    </div>
+                                                    <!--end::Avatar-->
+                                                    <!--begin::Details-->
+                                                    <div class="fw-semibold">
+                                                        <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary">Jugadores Escaneados</a>
+                                                        <div class="text-gray-400">Mas Info</div>
+                                                    </div>
+                                                    <!--end::Details-->
+                                                    <!--begin::Badge-->
+                                                    <div class="badge badge-light ms-auto">5</div>
+                                                    <!--end::Badge-->
+                                                </div>
                                             </div>
                                         </div>
 
