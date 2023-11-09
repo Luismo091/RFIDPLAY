@@ -1261,6 +1261,7 @@ FROM partidos
                                         ?>
                                         <div class="col-sm-6 col-xl-6 mb-xl-10">
                                             <div class="card h-lg-100">
+
                                                 <div class="card-header pt-7">
                                                     <h3 class="card-title align-items-start flex-column">
                                                         <span class="text-gray-400 mt-1 fw-semibold fs-6" id="formattedDate"><?php
@@ -1278,7 +1279,8 @@ FROM partidos
 
                                                             // Imprime la fecha formateada
                                                             echo $fecha_formateada;
-                                                            ?></span>
+                                                            ?>
+                                                        </span>
                                                     </h3>
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <div class="card-title align-items-lg-center flex-column"
@@ -1295,6 +1297,26 @@ FROM partidos
                     if ($row->estado == 3) {
                         echo '<span class="badge badge-secundary"> </i></i>Finalizado el ' . $row->fecha_fi . ' a las ' . $row->hora_fi . '  </span>';
                     } ?></span>
+                                                            <div class="card-toolbar">
+                                                                <!--begin::Menu-->
+                                                                <button class="btn btn-icon btn-color-gray-400 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
+                                                                    <i class="ki-outline ki-dots-square fs-1 text-gray-400 me-n1"></i>
+                                                                </button><div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px" data-kt-menu="true" style="">
+                                                                    <!--begin::Menu item-->
+                                                                    <div class="menu-item px-3">
+                                                                        <div class="menu-content fs-6 text-dark fw-bold px-3 py-4">Acciones Rapidas</div>
+                                                                    </div>
+                                                                    <div class="separator mb-3 opacity-75"></div>
+                                                                    <div class="menu-item px-3">
+                                                                        <a href="#" class="menu-link px-3">Eliminar</a>
+                                                                    </div>
+
+                                                                    <div class="menu-item px-3">
+                                                                        <a href="#" class="menu-link px-3">Eliminar</a>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="card-toolbar">

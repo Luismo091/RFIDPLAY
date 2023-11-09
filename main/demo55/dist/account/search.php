@@ -16,7 +16,7 @@ if ($result->num_rows != 0) {
         "nodeMCUId" => $nodeMCUId
     );
 
-    // Ruta segura para el archivo JSON (ajusta la ruta según tu configuración)
+    // Ruta segura para el archivo JSON
     $jsonFile = "data.json";
 
     if (file_exists($jsonFile) && is_writable($jsonFile)) {
@@ -31,7 +31,24 @@ if ($result->num_rows != 0) {
         $newJsonData = json_encode($currentData, JSON_PRETTY_PRINT);
         file_put_contents($jsonFile, $newJsonData);
 
-        // Responder al cliente
+        // Ahora, guardar también en datahistory.json
+        $jsonHistoryFile = "datahistory.json";
+        $historyData = array(
+            "date" => $date,
+            "serial" => $serial,
+            "nodeMCUId" => $nodeMCUId
+        );
+
+        if (file_exists($jsonHistoryFile) && is_writable($jsonHistoryFile)) {
+            $historyJsonData = file_get_contents($jsonHistoryFile);
+            $currentHistoryData = json_decode($historyJsonData, true);
+
+            $currentHistoryData[] = $historyData;
+            $newHistoryJsonData = json_encode($currentHistoryData, JSON_PRETTY_PRINT);
+            file_put_contents($jsonHistoryFile, $newHistoryJsonData);
+        }
+
+        // Responder al cliente nodoMCU
         printf("R-AIR Serial: %s Recibido", $serial);
     } else {
         printf("Error: No se pudo acceder al archivo JSON.");
@@ -39,3 +56,4 @@ if ($result->num_rows != 0) {
 } else {
     printf("Error: No se pudo guardar el serial.");
 }
+?>

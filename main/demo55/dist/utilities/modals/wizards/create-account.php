@@ -857,7 +857,6 @@ if (empty($_SESSION['mail'])) {
                     </div>
                     <!--end::My apps links-->
                     <!--begin::Action-->
-
                     <?php
                     include('\laragon\www\RFIDPLAY\main\conexion.php');
 
@@ -945,6 +944,7 @@ if (empty($_SESSION['mail'])) {
                         // Actualizar la hora cada segundo
                         setInterval(actualizarHora, 1000);
                     </script>
+
                     <!--end::Action-->
                 </div>
                 <!--end::Navbar-->
@@ -1214,6 +1214,35 @@ if (empty($_SESSION['mail'])) {
         <div id="kt_app_content" class="app-content flex-column-fluid">
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container container-fluid">
+                <div id="kt_app_toolbar" class="app-toolbar pt-2 pt-lg-10">
+                    <!--begin::Toolbar container-->
+                    <div id="kt_app_toolbar_container"
+                         class="app-container container-fluid d-flex align-items-stretch">
+                        <!--begin::Toolbar wrapper-->
+                        <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
+                            <!--begin::Page title-->
+                            <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
+                                <!--begin::Title-->
+                                <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
+                                    Sensores en RFIDPLAY</h1>
+                                <div id="ajax-result"></div>
+
+                            </div>
+                            <!--end::Page title-->
+                            <!--begin::Actions-->
+                            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                                <a href="#" class="btn btn-primary er fs-6 px-8 py-4" data-bs-toggle="modal"
+                                   data-bs-target="#kt_modal_create_account">Añadir Sensor RPLAY</a>
+                                <a href="../dist/assets/dowloads/CH341SER.EXE" class="btn btn-dark" DOWNLOAD><i class="ki-duotone ki-folder-down fs-4 me-2 "><span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>Drivers</a>
+                            </div>
+                        </div>
+                        <!--end::Toolbar wrapper-->
+                    </div>
+                    <!--end::Toolbar container-->
+                </div>
+
                         <?php
                         include('\laragon\www\RFIDPLAY\main\conexion.php');
                         $sql = $mysqli->query("SELECT * FROM SENSOR INNER JOIN rfidplay.camposdejuego c on sensor.idcampoa = c.id_campo INNER JOIN rfidplay.usuarios u on sensor.iduserfk = u.idusuarios
@@ -2383,11 +2412,11 @@ battery_charging_90
             <div class="card-title">
                 <!--begin::User-->
                 <div class="d-flex justify-content-center flex-column me-3">
-                    <a href="#" class="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1">Brian Cox</a>
+                    <a href="#" class="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1">Historial de Escaneos</a>
                     <!--begin::Info-->
                     <div class="mb-0 lh-1">
                         <span class="badge badge-success badge-circle w-10px h-10px me-1"></span>
-                        <span class="fs-7 fw-semibold text-muted">Active</span>
+                        <span class="fs-7 fw-semibold text-muted">JSON VISUALIZER</span>
                     </div>
                     <!--end::Info-->
                 </div>
@@ -2488,248 +2517,20 @@ battery_charging_90
                         <div class="d-flex align-items-center mb-2">
                             <!--begin::Avatar-->
                             <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-25.jpg"/>
+                                <img alt="Pic" src="../../demo55/dist/utilities/modals/wizards/php/5458a14ae4c8f07055b7441ff0f234cf.gif"/>
                             </div>
                             <!--end::Avatar-->
                             <!--begin::Details-->
                             <div class="ms-3">
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
-                                <span class="text-muted fs-7 mb-1">2 mins</span>
+                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Scan ID</a>
+                                <span class="text-muted fs-7 mb-1">FECHA</span>
                             </div>
                             <!--end::Details-->
                         </div>
                         <!--end::User-->
                         <!--begin::Text-->
                         <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start"
-                             data-kt-element="message-text">How likely are you to recommend our company to your friends
-                            and family ?
-                        </div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(in)-->
-                <!--begin::Message(out)-->
-                <div class="d-flex justify-content-end mb-10">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-end">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Details-->
-                            <div class="me-3">
-                                <span class="text-muted fs-7 mb-1">5 mins</span>
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary ms-1">You</a>
-                            </div>
-                            <!--end::Details-->
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-1.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end"
-                             data-kt-element="message-text">Hey there, we’re just writing to let you know that you’ve
-                            been subscribed to a repository on GitHub.
-                        </div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(out)-->
-                <!--begin::Message(in)-->
-                <div class="d-flex justify-content-start mb-10">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-start">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-25.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                            <!--begin::Details-->
-                            <div class="ms-3">
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
-                                <span class="text-muted fs-7 mb-1">1 Hour</span>
-                            </div>
-                            <!--end::Details-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start"
-                             data-kt-element="message-text">Ok, Understood!
-                        </div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(in)-->
-                <!--begin::Message(out)-->
-                <div class="d-flex justify-content-end mb-10">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-end">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Details-->
-                            <div class="me-3">
-                                <span class="text-muted fs-7 mb-1">2 Hours</span>
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary ms-1">You</a>
-                            </div>
-                            <!--end::Details-->
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-1.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end"
-                             data-kt-element="message-text">You’ll receive notifications for all issues, pull requests!
-                        </div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(out)-->
-                <!--begin::Message(in)-->
-                <div class="d-flex justify-content-start mb-10">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-start">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-25.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                            <!--begin::Details-->
-                            <div class="ms-3">
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
-                                <span class="text-muted fs-7 mb-1">3 Hours</span>
-                            </div>
-                            <!--end::Details-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start"
-                             data-kt-element="message-text">You can unwatch this repository immediately by clicking
-                            here:
-                            <a href="https://keenthemes.com">Keenthemes.com</a></div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(in)-->
-                <!--begin::Message(out)-->
-                <div class="d-flex justify-content-end mb-10">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-end">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Details-->
-                            <div class="me-3">
-                                <span class="text-muted fs-7 mb-1">4 Hours</span>
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary ms-1">You</a>
-                            </div>
-                            <!--end::Details-->
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-1.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end"
-                             data-kt-element="message-text">Most purchased Business courses during this sale!
-                        </div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(out)-->
-                <!--begin::Message(in)-->
-                <div class="d-flex justify-content-start mb-10">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-start">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-25.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                            <!--begin::Details-->
-                            <div class="ms-3">
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
-                                <span class="text-muted fs-7 mb-1">5 Hours</span>
-                            </div>
-                            <!--end::Details-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start"
-                             data-kt-element="message-text">Company BBQ to celebrate the last quater achievements and
-                            goals. Food and drinks provided
-                        </div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(in)-->
-                <!--begin::Message(template for out)-->
-                <div class="d-flex justify-content-end mb-10 d-none" data-kt-element="template-out">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-end">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Details-->
-                            <div class="me-3">
-                                <span class="text-muted fs-7 mb-1">Just now</span>
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary ms-1">You</a>
-                            </div>
-                            <!--end::Details-->
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-1.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end"
-                             data-kt-element="message-text"></div>
-                        <!--end::Text-->
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Message(template for out)-->
-                <!--begin::Message(template for in)-->
-                <div class="d-flex justify-content-start mb-10 d-none" data-kt-element="template-in">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column align-items-start">
-                        <!--begin::User-->
-                        <div class="d-flex align-items-center mb-2">
-                            <!--begin::Avatar-->
-                            <div class="symbol symbol-35px symbol-circle">
-                                <img alt="Pic" src="assets/media/avatars/300-25.jpg"/>
-                            </div>
-                            <!--end::Avatar-->
-                            <!--begin::Details-->
-                            <div class="ms-3">
-                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
-                                <span class="text-muted fs-7 mb-1">Just now</span>
-                            </div>
-                            <!--end::Details-->
-                        </div>
-                        <!--end::User-->
-                        <!--begin::Text-->
-                        <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start"
-                             data-kt-element="message-text">Right before vacation season we have the next Big Deal for
-                            you.
+                             data-kt-element="message-text">DATOS DE JSON
                         </div>
                         <!--end::Text-->
                     </div>
@@ -2739,33 +2540,40 @@ battery_charging_90
             </div>
             <!--end::Messages-->
         </div>
+        <script>
+            $(document).ready(function() {
+                // URL of your JSON file
+                var jsonFileUrl = 'path/to/your/json/file.json';
+
+                // Get the elements by their IDs
+                var avatar = $('#kt_drawer_chat_messenger_body .symbol img');
+                var userName = $('#kt_drawer_chat_messenger_body .fs-5');
+                var date = $('#kt_drawer_chat_messenger_body .text-muted');
+                var messageText = $('#kt_drawer_chat_messenger_body [data-kt-element="message-text"]');
+
+                // Fetch JSON data from the file
+                $.getJSON(jsonFileUrl, function(jsonDataArray) {
+                    // Check if the data is an array
+                    if (Array.isArray(jsonDataArray)) {
+                        // Iterate through each object in the array
+                        $.each(jsonDataArray, function(index, jsonObject) {
+                            // Update the HTML content with JSON data
+                            userName.text('Scan ID');
+                            date.text(jsonObject.date);
+                            messageText.text('DATOS DE JSON');
+
+                            // If you want to display the JSON content dynamically, you can iterate through the JSON keys
+                            $.each(jsonObject, function(key, value) {
+                                messageText.append('<br>' + key + ': ' + value);
+                            });
+                        });
+                    }
+                });
+            });
+        </script>
         <!--end::Card body-->
         <!--begin::Card footer-->
-        <div class="card-footer pt-4" id="kt_drawer_chat_messenger_footer">
-            <!--begin::Input-->
-            <textarea class="form-control form-control-flush mb-3" rows="1" data-kt-element="input"
-                      placeholder="Type a message"></textarea>
-            <!--end::Input-->
-            <!--begin:Toolbar-->
-            <div class="d-flex flex-stack">
-                <!--begin::Actions-->
-                <div class="d-flex align-items-center me-2">
-                    <button class="btn btn-sm btn-icon btn-active-light-primary me-1" type="button"
-                            data-bs-toggle="tooltip" title="Coming soon">
-                        <i class="ki-outline ki-paper-clip fs-3"></i>
-                    </button>
-                    <button class="btn btn-sm btn-icon btn-active-light-primary me-1" type="button"
-                            data-bs-toggle="tooltip" title="Coming soon">
-                        <i class="ki-outline ki-cloud-add fs-3"></i>
-                    </button>
-                </div>
-                <!--end::Actions-->
-                <!--begin::Send-->
-                <button class="btn btn-primary" type="button" data-kt-element="send">Send</button>
-                <!--end::Send-->
-            </div>
-            <!--end::Toolbar-->
-        </div>
+
         <!--end::Card footer-->
     </div>
     <!--end::Messenger-->

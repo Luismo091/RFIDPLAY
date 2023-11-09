@@ -26,7 +26,9 @@ if (empty($_SESSION['mail'])) {
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css"/>
-    <!--end::Global Stylesheets Bundle-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
 </head>
 <!--end::Head-->
@@ -137,7 +139,6 @@ if (empty($_SESSION['mail'])) {
                                     <div data-kt-search-element="results" class="d-none">
                                         <!--begin::Items-->
                                         <div class="scroll-y mh-200px mh-lg-350px">
-
                                             <!--begin::RESULTADOS DE BUSQUEDA-->
                                             <div id="search-results">
                                                 <!--begin::CAJA DE BUSQUEDA-->
@@ -708,6 +709,8 @@ if (empty($_SESSION['mail'])) {
                                 </div>
                                 <!--end::Tab panel-->
                             </div>
+
+
                             <!--end::Tab content-->
                         </div>
                         <!--end::Menu-->
@@ -738,7 +741,93 @@ if (empty($_SESSION['mail'])) {
                     </div>
                     <!--end::My apps links-->
                     <!--begin::Action-->
+                    <?php
+                    include('\laragon\www\RFIDPLAY\main\conexion.php');
 
+                    $idusu = $_SESSION['idusu'];
+
+                    $sql = $mysqli->query("SELECT * FROM sensor where iduserfk = $idusu");
+
+                    if ($sql->num_rows != 0) {
+                        while ($row = $sql->fetch_object()) {
+                            ?>
+                            <div class="app-navbar-item ms-1 ms-md-3">
+                                <span class="badge badge-light-dark"><?php echo $row->sensoruid; ?><span class="material-symbols-outlined">battery_share</span> <div id="ultimo-uid" style="display: none;"></div></span>
+
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="app-navbar-item ms-1 ms-md-3">
+                            <span class="badge badge-light-dark"></span>
+                        </div>
+                        <?php
+                    }
+                    ?>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        var fechaUltimoUid = localStorage.getItem("fechaUltimoUid");
+
+                        function reproducirSonido() {
+                            var audio = new Audio('../../demo55/dist/account/recivedsound.mp3');
+                            audio.play();
+                        }
+
+                        function obtenerUltimoUid() {
+                            var jsonUrl = "../../demo55/dist/account/data.json?nocache=" + new Date().getTime();
+                            $.ajax({
+                                url: jsonUrl,
+                                dataType: "json",
+                                success: function (data) {
+                                    // Encontrar el último UID
+                                    var ultimoUid = data[data.length - 1];
+                                    var fechaActual = ultimoUid.date;
+
+                                    if (fechaActual !== fechaUltimoUid) {
+                                        // La fecha del último UID es diferente, mostrarlo
+                                        $("#ultimo-uid")
+                                            .text(ultimoUid.serial)
+                                            .fadeIn(1000)
+                                            .delay(2000) // Esperar 2 segundos
+                                            .fadeOut(1000); // Animación de salida
+                                        reproducirSonido();
+                                        fechaUltimoUid = fechaActual;
+                                        localStorage.setItem("fechaUltimoUid", fechaActual);
+                                    }
+                                },
+                                error: function () {
+                                    console.error("Error al cargar el JSON desde la URL.");
+                                }
+                            });
+                        }
+
+                        // Llamar a la función para obtener el último UID inicialmente
+                        obtenerUltimoUid();
+                        // Configurar un intervalo para verificar y actualizar el último UID cada 5 segundos
+                        setInterval(obtenerUltimoUid, 5000); // 5000 milisegundos = 5 segundos
+                    </script>
+
+                    <div class="app-navbar-item ms-1 ms-md-3">
+                        <span class="menu-title" id="hora-span">3:15 PM</span>
+                    </div>
+
+                    <script>
+                        // Función para actualizar la hora en el elemento span
+                        function actualizarHora() {
+                            const elementoHora = document.querySelector('#hora-span'); // Usamos el ID para seleccionar el elemento
+                            const horaActual = new Date();
+                            const formatoHora = horaActual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            elementoHora.textContent = formatoHora;
+                        }
+
+                        // Actualizar la hora inicial
+                        actualizarHora();
+
+                        // Actualizar la hora cada segundo
+                        setInterval(actualizarHora, 1000);
+                    </script>
                     <!--end::Action-->
                 </div>
                 <!--end::Navbar-->
@@ -757,7 +846,7 @@ if (empty($_SESSION['mail'])) {
                 <div class="app-sidebar-logo flex-shrink-0 d-none d-md-flex flex-center align-items-center"
                      id="kt_app_sidebar_logo">
                     <!--begin::Logo-->
-                    <a href="../../demo55/dist/index.html">
+                    <a href="">
                         <img alt="Logo" src="assets/media/logos/demo55.svg"
                              class="h-55px d-none d-sm-inline app-sidebar-logo-default theme-light-show"/>
                         <img alt="Logo" src="assets/media/logos/demo55-dark.svg" class="h-55px theme-dark-show"/>
@@ -865,9 +954,7 @@ if (empty($_SESSION['mail'])) {
                              data-kt-menu="true">
                             <!--begin::Menu item-->
                             <div class="menu-item px-3">
-
                                 <div class="menu-content d-flex align-items-center px-3">
-
                                     <!--begin::Avatar-->
                                     <div class="symbol symbol-50px me-5">
                                         <img src="data:image/jpg;base64,<?php echo base64_encode($_SESSION['foto']) ?>">
@@ -973,10 +1060,8 @@ if (empty($_SESSION['mail'])) {
                                 <a href="#" class="menu-link px-5">
 											<span class="menu-title position-relative">Idioma
 											<span class="fs-8 rounded bg-light px-3 py-2 position-absolute translate-middle-y top-50 end-0">Español (Col)
-											<img class="w-15px h-15px rounded-1 ms-2" src="assets/media/flags/spain.svg"
-                                                 alt=""/></span></span>
+											<img class="w-15px h-15px rounded-1 ms-2" src="assets/media/flags/spain.svg" alt=""/></span></span>
                                 </a>
-
                             </div>
                             <!--end::Menu item-->
                             <!--begin::Menu item-->
@@ -1003,11 +1088,8 @@ if (empty($_SESSION['mail'])) {
             <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
                 <!--begin::Content wrapper-->
                 <div class="d-flex flex-column flex-column-fluid">
-
-
                     <!--begin::Toolbar-->
                     <div id="kt_app_toolbar" class="app-toolbar pt-2 pt-lg-10">
-
                         <!--begin::Toolbar container-->
                         <div id="kt_app_toolbar_container"
                              class="app-container container-fluid d-flex align-items-stretch">
@@ -1079,7 +1161,187 @@ if (empty($_SESSION['mail'])) {
                         <!--begin::Content container-->
                         <div id="kt_app_content_container" class="app-container container-fluid">
                             <!--begin::Row-->
+                            <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
+                                <!--begin::Col-->
+                                <div class="col-xl-3">
+                                    <!--begin::Card widget 3-->
+                                    <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100" style="background-color: #F1416C;background-image:url('assets/media/svg/shapes/wave-bg-red.svg')">
+                                        <!--begin::Header-->
+                                        <div class="card-header pt-5 mb-3">
+                                            <!--begin::Icon-->
+                                            <div class="d-flex flex-center rounded-circle h-80px w-80px" style="border: 1px dashed rgba(255, 255, 255, 0.4);background-color: #F1416C">
+                                                <i class="ki-outline ki-call text-white fs-2qx lh-0"></i>
+                                            </div>
+                                            <!--end::Icon-->
+                                        </div>
+                                        <!--end::Header-->
+                                        <!--begin::Card body-->
+                                        <div class="card-body d-flex align-items-end mb-3">
+                                            <!--begin::Info-->
+                                            <div class="d-flex align-items-center">
+                                                <span id="registroCount" class="fs-4hx text-white fw-bold me-6">Cargando..</span>
+                                                <div class="fw-bold fs-6 text-white">
+                                                    <span class="d-block">Escaneos</span>
+                                                    <span class="">de R-AIR</span>
+                                                </div>
+                                            </div>
+                                            <!--end::Info-->
+                                        </div>
+                                        <!--end::Card body-->
+                                        <!--begin::Card footer-->
+                                        <div class="card-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.3);background: rgba(0, 0, 0, 0.15);">
+                                            <!--begin::Progress-->
+                                            <div class="fw-bold text-white py-2">
+                                                <span id="registroCount" class="fs-1 d-block">Cargando...</span>
+                                                <span class="opacity-50">Llamados a a la API R-AIR</span>
+                                            </div>
+                                            <!--end::Progress-->
+                                        </div>
+                                        <!--end::Card footer-->
+                                    </div>
+                                    <script>
+                                        $(document).ready(function() {
+                                            // Ruta del archivo JSON
+                                            var jsonPath = '../../demo55/dist/account/datahistory.json';
+
+                                            // Cargar el archivo JSON usando jQuery
+                                            $.getJSON(jsonPath, function(data) {
+                                                // Obtener la cantidad de registros
+                                                var registros = data.length;
+
+                                                // Mostrar la cantidad en el span
+                                                $('#registroCount').text(registros);
+                                            });
+                                        });
+                                    </script>
+                                    <!--end::Card widget 3-->
+                                </div>
+                                <!--end::Col-->
+                                <!--begin::Col-->
+                                <div class="col-xl-3">
+                                    <!--begin::Card widget 3-->
+                                    <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100" style="background-color: #7239EA;background-image:url('assets/media/svg/shapes/wave-bg-purple.svg')">
+                                        <!--begin::Header-->
+                                        <div class="card-header pt-5 mb-3">
+                                            <!--begin::Icon-->
+                                            <div class="d-flex flex-center rounded-circle h-80px w-80px" style="border: 1px dashed rgba(255, 255, 255, 0.4);background-color: #7239EA">
+                                                <i class="ki-outline ki-call text-white fs-2qx lh-0"></i>
+                                            </div>
+                                            <!--end::Icon-->
+                                        </div>
+                                        <!--end::Header-->
+                                        <!--begin::Card body-->
+                                        <div class="card-body d-flex align-items-end mb-3">
+                                            <!--begin::Info-->
+                                            <div class="d-flex align-items-center">
+                                                <span class="fs-4hx text-white fw-bold me-6"><?php
+                                                    include('\laragon\www\RFIDPLAY\main\conexion.php');
+                                                    $sql = $mysqli->query("SELECT COUNT(id_documento) as counta FROM documentos WHERE rfidcpde IS NOT NULL");
+
+                                                    if ($row = $sql->fetch_object()) {
+                                                        echo $row->counta;
+
+                                                    }
+                                                    ?>
+                                                </span>
+                                                <div class="fw-bold fs-6 text-white">
+                                                    <span class="d-block">Jugadores y Entrenadores con</span>
+                                                    <span class="">con R-CODE</span>
+                                                </div>
+                                            </div>
+                                            <!--end::Info-->
+                                        </div>
+                                        <!--end::Card body-->
+                                        <!--begin::Card footer-->
+                                        <div class="card-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.3);background: rgba(0, 0, 0, 0.15);">
+                                            <!--begin::Progress-->
+                                            <div class="fw-bold text-white py-2">
+                                                <span class="fs-1 d-block">386</span>
+                                                <span class="opacity-50">Generated Leads</span>
+                                            </div>
+                                            <!--end::Progress-->
+                                        </div>
+                                        <!--end::Card footer-->
+                                    </div>
+                                    <!--end::Card widget 3-->
+                                </div>
+                                <!--end::Col-->
+                                <!--begin::Col-->
+                                <div class="col-sm-6 col-xxl-6">
+                                    <!--begin::Card widget 14-->
+                                    <div class="card card-flush h-xl-100">
+                                        <!--begin::Body-->
+                                        <div class="card-body text-center pb-5">
+                                            <!--begin::Overlay-->
+                                            <a class="d-block overlay" data-fslightbox="lightbox-hot-sales" href="assets/media/illustrations/sigma-1/IMG_2700.JPEG">
+                                                <!--begin::Image-->
+                                                <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded mb-7" style="height: 266px;background-image:url('assets/media/illustrations/sigma-1/IMG_2700.JPEG"></div>
+                                                <!--end::Image-->
+                                                <!--begin::Action-->
+                                                <div class="overlay-layer card-rounded bg-dark bg-opacity-25">
+                                                    <i class="ki-outline ki-eye fs-3x text-white"></i>
+                                                </div>
+                                                <!--end::Action-->
+                                            </a>
+                                            <!--end::Overlay-->
+                                            <!--begin::Info-->
+                                            <div class="d-flex align-items-end flex-stack mb-1">
+                                                <!--begin::Title-->
+                                                <div class="text-start">
+                                                    <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-4 d-block">Sensor R-AIR</span>
+                                                    <span class="text-gray-400 mt-1 fw-bold fs-6">Nuevo y mejorado capacidades ultra veloces versión (Wonderlust)</span>
+                                                </div>
+                                                <!--end::Title-->
+                                                <!--begin::Total-->
+                                                <span class="text-gray-600 text-end fw-bold fs-6">$</span>
+                                                <!--end::Total-->
+                                            </div>
+                                            <!--end::Info-->
+                                        </div>
+                                        <!--end::Body-->
+                                        <!--begin::Footer-->
+                                        <!--end::Footer-->
+                                    </div>
+                                    <!--end::Card widget 14-->
+                                </div>
+                                    <!--begin::Chart widget 36-->
+
+                                    <!--end::Chart widget 36-->
+
+                                <!--end::Col-->
+                            </div>
                             <div class="row gy-5 g-xl-10">
+                                <div class="card border-transparent" data-bs-theme="light" style="background-color: #1C325E;">
+                                    <!--begin::Body-->
+                                    <div class="card-body d-flex ps-xl-15">
+                                        <!--begin::Wrapper-->
+                                        <div class="m-0">
+                                            <!--begin::Title-->
+                                            <div class="position-relative fs-2x z-index-2 fw-bold text-white mb-7">
+														<span class="me-2">Añade un sensor
+														<span class="position-relative d-inline-block text-danger">
+															<a href="../../demo55/dist/utilities/modals/wizards/create-account.php" class="text-primary opacity-75-hover">RPLAY o RAIR</a>
+                                                            <!--begin::Separator-->
+															<span class="position-absolute opacity-50 bottom-0 start-0 border-4 border-primary border-bottom w-100"></span>
+                                                            <!--end::Separator-->
+														</span></span>
+                                                <br></div>
+                                            <!--end::Title-->
+                                            <!--begin::Action-->
+                                            <div class="mb-3">
+                                                <a href="../../demo55/dist/utilities/modals/wizards/create-account.php" class="btn btn-danger fw-semibold me-2">Empieza</a>
+
+                                            </div>
+                                            <!--begin::Action-->
+                                        </div>
+                                        <!--begin::Wrapper-->
+                                        <!--begin::Illustration-->
+                                        <img src="assets/media/illustrations/sigma-1/RFIDPLAY.png" class="position-absolute me-3 bottom-0 end-0 h-200px" alt="">
+                                        <!--end::Illustration-->
+                                    </div>
+                                    <!--end::Body-->
+                                </div>
+
 
                                 <!--begin::marcador en vivo-->
                                 <div class="card card-flush h-xl-100 mb-xl-10">
@@ -1141,15 +1403,102 @@ if (empty($_SESSION['mail'])) {
 
                                 </div>
 
-                            </div>
 
                             <!--end::Col-->
                         </div>
-                        <!--end::Row-->
-                        <!--begin::Row-->
+                            <div class="row gy-5 g-xl-10">
 
-                        <!--end::Row-->
+                                <?php
+                                include('\laragon\www\RFIDPLAY\main\conexion.php');
+                                $sql = $mysqli->query("SELECT count(id_jugador) as total,nombre_escuela,ciudad,fotoes,direccion,e.id_escuela as ides FROM jugadores 
+    RIGHT JOIN rfidplay.escuelasdefutbol e on jugadores.id_escuela = e.id_escuela
+group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_escuela ASC ");
+                                if ($sql->num_rows != 0) {
+                                    while ($row = $sql->fetch_object()) {
+                                        ?>
+                                        <div class="col-sm-6 col-xl-3 mb-xl-10">
+                                            <div class="card h-lg-100">
+                                                <!--begin::Body-->
+                                                <div class="card-header pt-5 mb-6">
+                                                    <!--begin::Title-->
+                                                    <h3 class="card-title align-items-start flex-column">
+                                                        <!--begin::Statistics-->
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <a href="../../demo55/dist/pages/user-profile/followers.php?datosescue=<?php echo $row->ides; ?>">
+                                                                <div class="m-0">
+                                                                    <div class="symbol symbol-50px me-5">
+                                                                        <img src="data:image/jpg;base64,<?php echo base64_encode($row->fotoes) ?>">
+                                                                        Ver
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+
+                                                    </h3>
+                                                    <!--end::Title-->
+                                                    <!--begin::Toolbar-->
+                                                    <div class="card-toolbar">
+                                                        <!--begin::Menu-->
+                                                        <button class="btn btn-icon btn-color-gray-400 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
+                                                            <i class="ki-outline ki-dots-square fs-1 text-gray-400 me-n1"></i>
+                                                        </button><div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px" data-kt-menu="true" style="">
+                                                            <!--begin::Menu item-->
+                                                            <div class="menu-item px-3">
+                                                                <div class="menu-content fs-6 text-dark fw-bold px-3 py-4">Acciones Rapidas</div>
+                                                            </div>
+                                                            <div class="separator mb-3 opacity-75"></div>
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3">Eliminar</a>
+                                                            </div>
+
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3">Eliminar</a>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <!--end::Toolbar-->
+                                                </div>
+
+                                                <div class="card-body d-flex justify-content-between align-items-start flex-column">
+
+                                                    <!--begin::Section-->
+                                                    <div class="d-flex flex-column my-7">
+                                                        <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_escuela; ?></span>
+                                                        <!--end::Number-->
+                                                        <!--begin::Follower-->
+                                                        <div class="m-0">
+                                                            <span class="fw-semibold fs-6 text-gray-400"><?php echo $row->ciudad; ?>, <?php echo $row->direccion; ?></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <span class="fs-6 fw-bolder text-gray-800 d-block mb-2">Jugadores Inscritos <?php echo $row->total; ?></span>
+                                                    <!--end::Title-->
+                                                    <!--begin::Users group-->
+                                                    <div class="symbol-group symbol-hover flex-nowrap">
+                                                        <?php
+                                                        $sqlPLAYER = $mysqli->query("SELECT documentosfoto FROM jugadores inner join rfidplay.documentos d on jugadores.id_documento = d.id_documento 
+                      where id_escuela = '$row->ides' LIMIT 10");
+                                                        while ($rowPLAYER = $sqlPLAYER->fetch_object()) {
+                                                            ?>
+                                                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip"  data-kt-initialized="1">
+                                                                <img alt="Pic" src="data:image/jpg;base64,<?php echo base64_encode($rowPLAYER->documentosfoto) ?>">
+                                                            </div>
+                                                        <?php }  ?>
+                                                    </div>
+
+                                                </div>
+                                                <!--end::Body-->
+                                            </div>
+                                            <!--end::Card widget 2-->
+                                        </div>
+                                    <?php }
+                                } ?>
+                            </div>
+
+
                     </div>
+
                     <!--end::Content container-->
                 </div>
                 <!--end::Content-->

@@ -1281,6 +1281,7 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                                     </div>
                                                     <!--end::Toolbar-->
                                                 </div>
+
                                                 <div class="card-body d-flex justify-content-between align-items-start flex-column">
 
                                                     <!--begin::Section-->
