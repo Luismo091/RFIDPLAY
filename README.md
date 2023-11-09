@@ -1,5 +1,5 @@
 
-![Nombre Alternativo](main/demo55/dist/assets/media/logos/demo55-small-dark.svg)
+![Logo de RFIDPLAY](main/demo55/dist/assets/media/logos/demo55-small-dark.svg)
 
 # Proyecto RFIDPLAY
 
