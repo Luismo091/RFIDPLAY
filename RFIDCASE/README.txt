@@ -1,1 +1,1 @@
-RFID case (nodemcu, rc522, relais, LEDs) by sumpfing on Thingiverse: https://www.thingiverse.com/thing:2594507
+RFID case (nodemcu, rc522, relais, LEDs) by sumpfing on Thingiverse
