@@ -1204,263 +1204,237 @@ if (empty($_SESSION['mail'])) {
             <!--end::Sidebar-->
             <!--begin::Main-->
             <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
-                <!--begin::Content wrapper-->
-                <div class="d-flex flex-column flex-column-fluid">
-                    <!--begin::Toolbar-->
-                    <div id="kt_app_toolbar" class="app-toolbar pt-2 pt-lg-10">
-                        <!--begin::Toolbar container-->
-                        <div id="kt_app_toolbar_container"
-                             class="app-container container-fluid d-flex align-items-stretch">
-                            <!--begin::Toolbar wrapper-->
-                            <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
-                                        Sensores en RFIDPLAY</h1>
-                                    <div id="ajax-result"></div>
 
-                                </div>
-                                <!--end::Page title-->
-                                <!--begin::Actions-->
-                                <div class="d-flex align-items-center gap-2 gap-lg-3">
-                                    <a href="#" class="btn btn-primary er fs-6 px-8 py-4" data-bs-toggle="modal"
-                                       data-bs-target="#kt_modal_create_account">Añadir Sensor RPLAY</a>
-                                    <a href="../dist/assets/dowloads/CH341SER.EXE" class="btn btn-dark" DOWNLOAD><i class="ki-duotone ki-folder-down fs-4 me-2 "><span class="path1"></span>
-                                            <span class="path2"></span>
-                                        </i>Drivers</a>
-                                </div>
-                            </div>
-                            <!--end::Toolbar wrapper-->
-                        </div>
-                        <!--end::Toolbar container-->
-                    </div>
+
 
 
                     <!--end::Toolbar-->
                     <!--begin::Content-->
-                    <?php
-                    include('\laragon\www\RFIDPLAY\main\conexion.php');
-                    $sql = $mysqli->query("SELECT * FROM SENSOR INNER JOIN rfidplay.camposdejuego c on sensor.idcampoa = c.id_campo INNER JOIN rfidplay.usuarios u on sensor.iduserfk = u.idusuarios
+
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <!--begin::Content container-->
+            <div id="kt_app_content_container" class="app-container container-fluid">
+                        <?php
+                        include('\laragon\www\RFIDPLAY\main\conexion.php');
+                        $sql = $mysqli->query("SELECT * FROM SENSOR INNER JOIN rfidplay.camposdejuego c on sensor.idcampoa = c.id_campo INNER JOIN rfidplay.usuarios u on sensor.iduserfk = u.idusuarios
 inner join trusted_sensors t on sensor.sensoruid = t.trusted_sensorscol");
-                    if ($sql->num_rows != 0) {
+                        if ($sql->num_rows != 0) {
 
                         while ($row = $sql->fetch_object()) {
-                            ?>
+                        ?>
 
-                            <!--begin::Body-->
+                        <!--begin::Body-->
 
-                            <div class="card-body p-lg-12 position-relative">
-                                <!--begin::Hero-->
-                                <div class="position-relative mb-2">
-                                    <!--begin::Overlay-->
-                                    <div class="overlay overlay-show">
-                                        <!--begin::Image-->
-                                        <div class="bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-250px"
-                                             style="background-image:url('assets/media/escenarios/backgra.gif')"></div>
-                                        <!--end::Image-->
-                                        <!--begin::layer-->
-                                        <div class="overlay-layer rounded bg-black" style="opacity: 0.1"></div>
-                                        <!--end::layer-->
+                        <div class="card-body p-lg-12 position-relative">
+                            <!--begin::Hero-->
+                            <div class="position-relative mb-2">
+                                <!--begin::Overlay-->
+                                <div class="overlay overlay-show">
+                                    <!--begin::Image-->
+                                    <div class="bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-250px"
+                                         style="background-image:url('assets/media/escenarios/backgra.gif')"></div>
+                                    <!--end::Image-->
+                                    <!--begin::layer-->
+                                    <div class="overlay-layer rounded bg-black" style="opacity: 0.1"></div>
+                                    <!--end::layer-->
+                                </div>
+                                <!--end::Overlay-->
+                                <!--begin::Heading-->
+                                <div class="position-absolute text-white mb-8 ms-10 bottom-0">
+
+                                    <!--begin::Title-->
+                                    <h3 class="text-white fs-2qx fw-bold mb-3 m">UID DE
+                                        SENSOR: <?php echo $row->sensoruid; ?></h3>
+                                    <!--end::Title-->
+                                    <!--begin::Text-->
+                                    <div class="fs-5 fw-semibold">CAMPO
+                                        ENLAZADO: <?php echo $row->nombre_campo; ?></div>
+                                    <!--end::Text-->
+                                    <div class="card-toolbar">
+                                        <span class="text-white-400 mt-1 fw-semibold fs-6">USUARIO ENLAZADO: <?php echo $row->mail; ?></span>
                                     </div>
-                                    <!--end::Overlay-->
-                                    <!--begin::Heading-->
-                                    <div class="position-absolute text-white mb-8 ms-10 bottom-0">
-
-                                        <!--begin::Title-->
-                                        <h3 class="text-white fs-2qx fw-bold mb-3 m">UID DE
-                                            SENSOR: <?php echo $row->sensoruid; ?></h3>
-                                        <!--end::Title-->
-                                        <!--begin::Text-->
-                                        <div class="fs-5 fw-semibold">CAMPO
-                                            ENLAZADO: <?php echo $row->nombre_campo; ?></div>
-                                        <!--end::Text-->
-                                        <div class="card-toolbar">
-                                            <span class="text-white-400 mt-1 fw-semibold fs-6">USUARIO ENLAZADO: <?php echo $row->mail; ?></span>
-                                        </div>
-                                        <div class="card-footer d-flex justify-content-between px-1 py-3">
-                                            <a href="#" class="btn btn-danger hover-scale eliminarEnlace"
-                                               data-idsensor="<?php echo $row->idsensor; ?>">Eliminar</a>
-                                        </div>
+                                    <div class="card-footer d-flex justify-content-between px-1 py-3">
+                                        <a href="#" class="btn btn-danger hover-scale eliminarEnlace"
+                                           data-idsensor="<?php echo $row->idsensor; ?>">Eliminar</a>
                                     </div>
-                                    <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
                                         <span class="badge badge-light-dark">A CABLE<span class="material-symbols-outlined">
 battery_charging_90
 </span></span>
 
-                                    </div>
-                                    <a href="#"
-                                       class="btn btn-icon btn-secondary position-absolute top-0 end-0 mt-2 me-2"
-                                       data-bs-toggle="modal" data-bs-target="#kt_modal_2">
-                                        <i class="ki-duotone ki-message-programming fs-2 me-0">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                            <span class="path3"></span>
-                                            <span class="path4"></span>
-                                        </i>
-                                    </a>
-
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const openModalButton = document.getElementById('openModalButton');
-
-                                            openModalButton.addEventListener('click', function () {
-
-                                                const modal = new bootstrap.Modal(document.getElementById('kt_modal_2'));
-                                                modal.show();
-
-                                                connectToSerial();
-                                            });
-                                        });
-                                    </script>
-
-
-
                                 </div>
+                                <a href="#"
+                                   class="btn btn-icon btn-secondary position-absolute top-0 end-0 mt-2 me-2"
+                                   data-bs-toggle="modal" data-bs-target="#kt_modal_2">
+                                    <i class="ki-duotone ki-message-programming fs-2 me-0">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                    </i>
+                                </a>
+
                                 <script>
-                                    $(document).ready(function () {
-                                        $(".eliminarEnlace").click(function (e) {
-                                            e.preventDefault();
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const openModalButton = document.getElementById('openModalButton');
 
-                                            var idSensor = $(this).data("idsensor");
+                                        openModalButton.addEventListener('click', function () {
 
-                                            // Mostrar la confirmación antes de continuar con la eliminación
-                                            Swal.fire({
-                                                title: 'Eliminar Sensor',
-                                                text: '¿Quieres eliminar este Sensor?',
-                                                icon: 'warning',
-                                                showCancelButton: true,
-                                                confirmButtonText: 'Sí, eliminar',
-                                                cancelButtonText: 'Cancelar',
-                                                buttonsStyling: false,
-                                                customClass: {
-                                                    confirmButton: 'btn btn-danger',
-                                                    cancelButton: 'btn btn-light'
-                                                }
-                                            }).then((result) => {
-                                                if (result.isConfirmed) {
-                                                    // Si el usuario confirma, procedemos con la eliminación
-                                                    $.ajax({
-                                                        type: "POST",
-                                                        url: "../../demo55/dist/utilities/modals/wizards/php/elim.php",
-                                                        data: {idsensor: idSensor},
-                                                        success: function (response) {
-                                                            $("#ajax-result").html(response);
-                                                        }
-                                                    });
-                                                }
-                                            });
+                                            const modal = new bootstrap.Modal(document.getElementById('kt_modal_2'));
+                                            modal.show();
+
+                                            connectToSerial();
                                         });
                                     });
                                 </script>
-                                <!--end::Card-->
-                                <div id="kt_create_new_payment_method_2" class="fs-6 ps-10 collapse" style="">
-                                    <!--begin::Details-->
+
+                            </div>
+                            <script>
+                                $(document).ready(function () {
+                                    $(".eliminarEnlace").click(function (e) {
+                                        e.preventDefault();
+
+                                        var idSensor = $(this).data("idsensor");
+
+                                        // Mostrar la confirmación antes de continuar con la eliminación
+                                        Swal.fire({
+                                            title: 'Eliminar Sensor',
+                                            text: '¿Quieres eliminar este Sensor?',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Sí, eliminar',
+                                            cancelButtonText: 'Cancelar',
+                                            buttonsStyling: false,
+                                            customClass: {
+                                                confirmButton: 'btn btn-danger',
+                                                cancelButton: 'btn btn-light'
+                                            }
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                // Si el usuario confirma, procedemos con la eliminación
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "../../demo55/dist/utilities/modals/wizards/php/elim.php",
+                                                    data: {idsensor: idSensor},
+                                                    success: function (response) {
+                                                        $("#ajax-result").html(response);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+                            <!--end::Card-->
+                            <div id="kt_create_new_payment_method_2" class="fs-6 ps-10 collapse" style="">
+                                <!--begin::Details-->
+                                <div class="d-flex flex-wrap py-5">
+                                    <!--begin::Col-->
                                     <div class="d-flex flex-wrap py-5">
                                         <!--begin::Col-->
-                                        <div class="d-flex flex-wrap py-5">
-                                            <!--begin::Col-->
-                                            <div class="flex-equal me-5">
-                                                <table class="table table-flush fw-semibold gy-1">
-                                                    <tbody><tr>
-                                                        <td class="text-muted min-w-125px w-125px">Nombre</td>
-                                                        <td class="text-gray-800"><?php echo $row->trusted_sensorscol; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">MAC</td>
-                                                        <td class="text-gray-800"><?php echo $row->mac_address; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Wifi SSID</td>
-                                                        <td class="text-gray-800"><?php echo $row->wifi_ssid; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Wifi Clave</td>
-                                                        <td class="text-gray-800"><?php echo $row->wifi_key; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Numero Serial</td>
-                                                        <td class="text-gray-800"><?php echo $row->serial_number; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Caracteristicas</td>
-                                                        <td class="text-gray-800"><?php echo $row->additional_features; ?> Tamaño: <?php echo $row->size; ?></td>
-                                                    </tr>
-                                                    </tbody></table>
-                                            </div>
-                                            <!--end::Col-->
-                                            <!--begin::Col-->
-                                            <div class="flex-equal">
-                                                <table class="table table-flush fw-semibold gy-1">
-                                                    <tbody><tr>
-                                                        <td class="text-muted min-w-125px w-125px">CPUs</td>
-                                                        <td class="text-gray-800"><?php echo $row->cpu; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Memorias</td>
-                                                        <td class="text-gray-800">Ram: <?php echo $row->ram_memory; ?> Flash: <?php echo $row->flash_memory; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Conectividad</td>
-                                                        <td class="text-gray-800">
-                                                            <?php echo $row->wireless_connectivity ?> Interfaces: <?php echo $row->communication_interfaces; ?>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Alimentación</td>
-                                                        <td class="text-gray-800">Voltage: <?php echo $row->operating_voltage; ?> Current: <?php echo $row->operating_current; ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted min-w-125px w-125px">Herramientas Soportadas</td>
-                                                        <td class="text-gray-800"><?php echo $row->supported_os; ?> Desarrollo: <?php echo $row->development_platform; ?>
-                                                    </tr>
+                                        <div class="flex-equal me-5">
+                                            <table class="table table-flush fw-semibold gy-1">
+                                                <tbody><tr>
+                                                    <td class="text-muted min-w-125px w-125px">Nombre</td>
+                                                    <td class="text-gray-800"><?php echo $row->trusted_sensorscol; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">MAC</td>
+                                                    <td class="text-gray-800"><?php echo $row->mac_address; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Wifi SSID</td>
+                                                    <td class="text-gray-800"><?php echo $row->wifi_ssid; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Wifi Clave</td>
+                                                    <td class="text-gray-800"><?php echo $row->wifi_key; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Numero Serial</td>
+                                                    <td class="text-gray-800"><?php echo $row->serial_number; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Caracteristicas</td>
+                                                    <td class="text-gray-800"><?php echo $row->additional_features; ?> Tamaño: <?php echo $row->size; ?></td>
+                                                </tr>
+                                                </tbody></table>
+                                        </div>
+                                        <!--end::Col-->
+                                        <!--begin::Col-->
+                                        <div class="flex-equal">
+                                            <table class="table table-flush fw-semibold gy-1">
+                                                <tbody><tr>
+                                                    <td class="text-muted min-w-125px w-125px">CPUs</td>
+                                                    <td class="text-gray-800"><?php echo $row->cpu; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Memorias</td>
+                                                    <td class="text-gray-800">Ram: <?php echo $row->ram_memory; ?> Flash: <?php echo $row->flash_memory; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Conectividad</td>
+                                                    <td class="text-gray-800">
+                                                        <?php echo $row->wireless_connectivity ?> Interfaces: <?php echo $row->communication_interfaces; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Alimentación</td>
+                                                    <td class="text-gray-800">Voltage: <?php echo $row->operating_voltage; ?> Current: <?php echo $row->operating_current; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted min-w-125px w-125px">Herramientas Soportadas</td>
+                                                    <td class="text-gray-800"><?php echo $row->supported_os; ?> Desarrollo: <?php echo $row->development_platform; ?>
+                                                </tr>
 
-                                                    <i class="ki-outline ki-check-circle fs-2 text-success"></i>RPLAY WEB OK</td>
-                                                    </tbody></table>
-                                            </div>
-                                            <!--end::Col-->
+                                                <i class="ki-outline ki-check-circle fs-2 text-success"></i>RPLAY WEB OK</td>
+                                                </tbody></table>
                                         </div>
                                         <!--end::Col-->
                                     </div>
-                                    <!--end::Details-->
+                                    <!--end::Col-->
                                 </div>
-
-                                    <!--begin::Options-->
-                                    <div id="kt_create_new_payment_method">
-                                        <div class="py-1">
-                                            <!--begin::Header-->
-                                            <div class="py-3 d-flex flex-stack flex-wrap">
-                                                <!--begin::Toggle-->
-                                                <div class="d-flex align-items-center collapsible toggle collapsed" data-bs-toggle="collapse" data-bs-target="#kt_create_new_payment_method_2" aria-expanded="false">
-                                                    <!--begin::Arrow-->
-                                                    <div class="btn btn-sm btn-icon btn-active-color-primary ms-n3 me-2">
-                                                        <i class="ki-outline ki-minus-square toggle-on text-primary fs-2"></i>
-                                                        <i class="ki-outline ki-plus-square toggle-off fs-2"></i>
-                                                    </div>
-                                                    <!--end::Arrow-->
-                                                    <div class="me-3">
-                                                        <div class="d-flex align-items-center fw-bold">Más Detalles</div>
-                                                        <div class="text-muted"><?php echo $row->sensoruid;?></div>
-                                                    </div>
-                                                    <!--end::Summary-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Options-->
-                                </div>
+                                <!--end::Details-->
                             </div>
 
+                            <!--begin::Options-->
+                            <div id="kt_create_new_payment_method">
+                                <div class="py-1">
+                                    <!--begin::Header-->
+                                    <div class="py-3 d-flex flex-stack flex-wrap">
+                                        <!--begin::Toggle-->
+                                        <div class="d-flex align-items-center collapsible toggle collapsed" data-bs-toggle="collapse" data-bs-target="#kt_create_new_payment_method_2" aria-expanded="false">
+                                            <!--begin::Arrow-->
+                                            <div class="btn btn-sm btn-icon btn-active-color-primary ms-n3 me-2">
+                                                <i class="ki-outline ki-minus-square toggle-on text-primary fs-2"></i>
+                                                <i class="ki-outline ki-plus-square toggle-off fs-2"></i>
+                                            </div>
+                                            <!--end::Arrow-->
+                                            <div class="me-3">
+                                                <div class="d-flex align-items-center fw-bold">Más Detalles</div>
+                                                <div class="text-muted"><?php echo $row->sensoruid;?></div>
+                                            </div>
+                                            <!--end::Summary-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Options-->
+                        </div>
+                    </div>
 
-                            <!--end::Body-->
 
-                        <?php }
+                    <!--end::Body-->
+
+                    <?php }
                     }else{
                     ?>
                 </div>
                 <div id="kt_app_content" class="app-content flex-column-fluid">
+
                     <!--begin::Content container-->
-                    <div id="kt_app_content_container" class="app-container container-fluid">
+
                         <!--begin::Card-->
                         <div class="card">
                             <!--begin::Card body-->
@@ -1490,7 +1464,7 @@ battery_charging_90
                             <!--end::Card body-->
                         </div>
                         <!--end::Card-->
-                    </div>
+
                     <!--end::Content container-->
                 </div>
 
@@ -1500,6 +1474,13 @@ battery_charging_90
             <?php
             }
             ?>
+                    </div>
+                    <!--end::Body-->
+                </div>
+                <!--end::Careers - List-->
+            </div>
+            <!--end::Content container-->
+        </div>
             <div class="modal bg-body fade" tabindex="-1" id="kt_modal_2">
                 <div class="modal-dialog modal-fullscreen">
                     <div class="modal-content shadow-none">

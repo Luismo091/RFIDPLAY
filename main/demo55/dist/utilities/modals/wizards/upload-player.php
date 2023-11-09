@@ -1211,7 +1211,9 @@ include('\laragon\www\RFIDPLAY\main\conexion.php');
 
                                                         <th class="min-w-200px">Nombres y Apellidos </th>
                                                         <th class="text-end min-w-100px">Documento</th>
+                                                        <th class="text-end min-w-100px">Rcode</th>
                                                         <th class="text-end min-w-70px">Nombre de Escuela</th>
+                                                        <th class="text-end min-w-70px">Equipos</th>
                                                         <th class="text-end min-w-70px">PDF</th>
 
                                                     </tr>

@@ -1241,35 +1241,73 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
                                         <div class="col-sm-6 col-xl-3 mb-xl-10">
                                             <div class="card h-lg-100">
                                                 <!--begin::Body-->
-                                                <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                                    <!--begin::Icon-->
-                                                    <a href="../../demo55/dist/pages/user-profile/followers.php?datosescue=<?php echo $row->ides; ?>">
-                                                    <div class="m-0">
-                                                        <div class="symbol symbol-50px me-5">
-                                                            <img src="data:image/jpg;base64,<?php echo base64_encode($row->fotoes) ?>">
-                                                            Ver
+                                                <div class="card-header pt-5 mb-6">
+                                                    <!--begin::Title-->
+                                                    <h3 class="card-title align-items-start flex-column">
+                                                        <!--begin::Statistics-->
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <a href="../../demo55/dist/pages/user-profile/followers.php?datosescue=<?php echo $row->ides; ?>">
+                                                                <div class="m-0">
+                                                                    <div class="symbol symbol-50px me-5">
+                                                                        <img src="data:image/jpg;base64,<?php echo base64_encode($row->fotoes) ?>">
+                                                                        Ver
+                                                                    </div>
+                                                                </div>
+                                                            </a>
                                                         </div>
-                                                    </div>
 
-                                                    </a>
-                                                    <!--end::Icon-->
+                                                    </h3>
+                                                    <!--end::Title-->
+                                                    <!--begin::Toolbar-->
+                                                    <div class="card-toolbar">
+                                                        <!--begin::Menu-->
+                                                        <button class="btn btn-icon btn-color-gray-400 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
+                                                            <i class="ki-outline ki-dots-square fs-1 text-gray-400 me-n1"></i>
+                                                        </button><div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px" data-kt-menu="true" style="">
+                                                            <!--begin::Menu item-->
+                                                            <div class="menu-item px-3">
+                                                                <div class="menu-content fs-6 text-dark fw-bold px-3 py-4">Acciones Rapidas</div>
+                                                            </div>
+                                                            <div class="separator mb-3 opacity-75"></div>
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3">Eliminar</a>
+                                                            </div>
+
+                                                            <div class="menu-item px-3">
+                                                                <a href="#" class="menu-link px-3">Eliminar</a>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <!--end::Toolbar-->
+                                                </div>
+                                                <div class="card-body d-flex justify-content-between align-items-start flex-column">
+
                                                     <!--begin::Section-->
                                                     <div class="d-flex flex-column my-7">
-
-                                                        <!--begin::Number-->
                                                         <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $row->nombre_escuela; ?></span>
                                                         <!--end::Number-->
                                                         <!--begin::Follower-->
                                                         <div class="m-0">
                                                             <span class="fw-semibold fs-6 text-gray-400"><?php echo $row->ciudad; ?>, <?php echo $row->direccion; ?></span>
                                                         </div>
-                                                        <!--end::Follower-->
                                                     </div>
-                                                    <!--end::Section-->
-                                                    <!--begin::Badge-->
-                                                    <span class="badge badge-light-success fs-base">
-													<i class="ki-outline ki-arrow-up fs-5 text-success ms-n1"></i>Jugadores Inscritos <?php echo $row->total; ?></span>
-                                                    <!--end::Badge-->
+
+                                                        <span class="fs-6 fw-bolder text-gray-800 d-block mb-2">Jugadores Inscritos <?php echo $row->total; ?></span>
+                                                        <!--end::Title-->
+                                                        <!--begin::Users group-->
+                                                        <div class="symbol-group symbol-hover flex-nowrap">
+                                                            <?php
+                                                            $sqlPLAYER = $mysqli->query("SELECT documentosfoto FROM jugadores inner join rfidplay.documentos d on jugadores.id_documento = d.id_documento 
+                      where id_escuela = '$row->ides' LIMIT 10");
+                                                            while ($rowPLAYER = $sqlPLAYER->fetch_object()) {
+                                                                ?>
+                                                                <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip"  data-kt-initialized="1">
+                                                                    <img alt="Pic" src="data:image/jpg;base64,<?php echo base64_encode($rowPLAYER->documentosfoto) ?>">
+                                                                </div>
+                                                            <?php }  ?>
+                                                        </div>
+
                                                 </div>
                                                 <!--end::Body-->
                                             </div>
@@ -3630,7 +3668,7 @@ group by e.id_escuela,nombre_escuela,ciudad,fotoes,direccion ORDER BY nombre_esc
  <i class="path2"></i>
 </i></span>
                                                 <input type="text" name="correor" class="form-control" id="correor"
-                                                       placeholder="Esperando Sensor" aria-label="Username"
+                                                       placeholder="" aria-label="Username"
                                                        aria-describedby="basic-addon1"/>
                                             </div>
                                         </div>

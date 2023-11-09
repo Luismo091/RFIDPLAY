@@ -14,8 +14,6 @@ RFIDPLAY es una plataforma de gestión y seguimiento de eventos deportivos, dise
 
 - **Interfaz de Usuario Intuitiva:** Proporciona una interfaz de usuario intuitiva y fácil de usar para jugadores, entrenadores y administradores.
 
-- **Administración de Usuarios:** Los administradores pueden gestionar las cuentas de usuarios, incluyendo la eliminación de cuentas inactivas o no autorizadas.
-
 - **Administración de Sensores RFID:** Permite la configuración de opciones de conexión de los sensores RFID registrados.
 
 ## Requisitos de instalación

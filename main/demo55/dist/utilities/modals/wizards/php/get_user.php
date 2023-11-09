@@ -3,10 +3,13 @@
 include '\laragon\www\RFIDPLAY\main\conexion.php';
 echo '';
 
-
-$query = "SELECT * FROM documentos 
-          INNER JOIN rfidplay.jugadores j ON documentos.id_documento = j.id_documento
-          INNER JOIN rfidplay.escuelasdefutbol e ON j.id_escuela = e.id_escuela";
+$query = "SELECT j.id_jugador, documentos.*, GROUP_CONCAT(e2.nombre_equipo SEPARATOR ', ') AS equipos_asignados, e.nombre_escuela as nameess
+FROM documentos
+INNER JOIN rfidplay.jugadores j ON documentos.id_documento = j.id_documento
+INNER JOIN rfidplay.escuelasdefutbol e ON j.id_escuela = e.id_escuela
+INNER JOIN rfidplay.equipos e2 ON e.id_escuela = e2.id_escuela
+GROUP BY j.id_jugador, documentos.id_documento
+ORDER BY j.id_jugador DESC;";
 
 $result = mysqli_query($mysqli, $query);
 
@@ -34,7 +37,13 @@ if (mysqli_num_rows($result) > 0) {
         echo '<span class="fw-bold">' . $row['numero_documento'] . '</span>';
         echo '</td>';
         echo '<td class="text-end pe-0">';
-        echo '<span class="fw-bold">' . $row['nombre_escuela'] . '</span>';
+        echo '<span class="fw-bold">' . $row['rfidcpde'] . '</span>';
+        echo '</td>';
+        echo '<td class="text-end pe-0">';
+        echo '<span class="fw-bold">' . $row['nameess'] . '</span>';
+        echo '</td>';
+        echo '<td class="text-end pe-0">';
+        echo '<span class="fw-bold">' . $row['equipos_asignados'] . '</span>';
         echo '</td>';
         echo '<td class="text-end">';
         echo '<button class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_upgrade_plan" data-pdf-url="o">Abrir PDF</button>';
