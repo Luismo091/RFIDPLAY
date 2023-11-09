@@ -1,5 +1,5 @@
 
-<span>![</span><span>Aquí la descripción de la imagen por si no carga</span><span>]</span><span>(</span><span>https://github.com/Luismo091/RFIDPLAY/blob/master/main/demo55/dist/assets/media/logos/demo55.svg</span><span>)</span>
+<span>![</span><span>Aquí la descripción de la imagen por si no carga</span><span>]</span><span>(</span><span>main/demo55/dist/assets/media/logos/demo55.svg</span><span>)</span>
 # Proyecto RFIDPLAY
 
 RFIDPLAY es una plataforma de gestión y seguimiento de eventos deportivos, diseñada para escuelas de fútbol y equipos deportivos. Permite la autenticación de jugadores y entrenadores mediante tarjetas RFID y ofrece funcionalidades para organizar torneos, registrar partidos y administrar usuarios.
