@@ -1,4 +1,6 @@
 ![Logo de RFIDPLAY](main/demo55/dist/assets/media/logos/demo55-small-dark.svg)
+Nota: Para aprovechar al máximo las funcionalidades de RFIDPLAY, se requiere el uso del prototipo R-AIR (RFIDPLAY Advanced Integration Reader). Asegúrate de contar con el hardware adecuado para la autenticación mediante tarjetas RFID y para habilitar las características avanzadas de seguimiento de eventos deportivos. Puedes obtener más información sobre el prototipo R-AIR y su instalación en [enlace al sitio web del prototipo R-AIR].
+
 # Proyecto RFIDPLAY
 
 RFIDPLAY es una plataforma de gestión y seguimiento de eventos deportivos, diseñada para escuelas de fútbol y equipos deportivos. Permite la autenticación de jugadores y entrenadores mediante tarjetas RFID y ofrece funcionalidades para organizar torneos, registrar partidos y administrar usuarios.
