@@ -1,6 +1,6 @@
 ![Logo de RFIDPLAY](main/demo55/dist/assets/media/logos/demo55-small-dark.svg)
 
-**Nota:** Es necesario el uso del prototipo R-AIR para aprovechar la mayoría de las funcionalidades de RFIDPLAY.
+**Nota:** Para aprovechar al máximo las funcionalidades ofrecidas por RFIDPLAY, es esencial contar con el prototipo R-AIR. Este dispositivo no solo garantiza la plena operatividad, sino que también habilita características avanzadas que enriquecen la experiencia de gestión y seguimiento de eventos deportivos proporcionada por la plataforma. Asegúrate de integrar el prototipo R-AIR para disfrutar de todas las capacidades y beneficios que RFIDPLAY tiene para ofrecer.
 
 # Proyecto RFIDPLAY
 
