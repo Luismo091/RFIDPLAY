@@ -1,4 +1,5 @@
 ![Logo de RFIDPLAY](main/demo55/dist/assets/media/logos/demo55-small-dark.svg)
+
 Nota: Para aprovechar al máximo las funcionalidades de RFIDPLAY, se requiere el uso del prototipo R-AIR (RFIDPLAY Advanced Integration Reader). Asegúrate de contar con el hardware adecuado para la autenticación mediante tarjetas RFID y para habilitar las características avanzadas de seguimiento de eventos deportivos. Puedes obtener más información sobre el prototipo R-AIR y su instalación en [enlace al sitio web del prototipo R-AIR].
 
 # Proyecto RFIDPLAY
