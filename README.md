@@ -1,5 +1,7 @@
 ![Logo de RFIDPLAY](main/demo55/dist/assets/media/logos/demo55-small-dark.svg)
 
+**Nota:** Es necesario el uso del prototipo R-AIR para aprovechar la mayoría de las funcionalidades de RFIDPLAY.
+
 # Proyecto RFIDPLAY
 
 RFIDPLAY es una plataforma de gestión y seguimiento de eventos deportivos, diseñada para escuelas de fútbol y equipos deportivos. Permite la autenticación de jugadores y entrenadores mediante tarjetas RFID y ofrece funcionalidades para organizar torneos, registrar partidos y administrar usuarios.
@@ -25,4 +27,4 @@ RFIDPLAY es una plataforma de gestión y seguimiento de eventos deportivos, dise
 - [Arduino IDE](https://www.arduino.cc/en/software)
 - Librerías Arduino necesarias (ESP8266WiFi, ESP8266HTTPClient, SPI, MFRC522, WiFiManager)
 
-**Nota:** Es necesario el uso del prototipo R-AIR para aprovechar la mayoría de las funcionalidades de RFIDPLAY.
+
